@@ -192,7 +192,7 @@ namespace Invest_Application
         {
             return ExtractDecimalFromFile(AppPaths.GetGoldAPIFile());
         }
-        public static decimal GetRealEstateMarketPrice()
+        public static decimal GetRealEstateMarketExponent()
         {
             return ExtractDecimalFromFile(AppPaths.GetRealEstateAPIFile());
         }
