@@ -1,0 +1,17 @@
+E:\InvestApp\bin\Debug\net9.0-windows\InvestApp.exe
+E:\InvestApp\bin\Debug\net9.0-windows\InvestApp.deps.json
+E:\InvestApp\bin\Debug\net9.0-windows\InvestApp.runtimeconfig.json
+E:\InvestApp\bin\Debug\net9.0-windows\InvestApp.dll
+E:\InvestApp\bin\Debug\net9.0-windows\InvestApp.pdb
+E:\InvestApp\obj\Debug\net9.0-windows\InvestApp.GeneratedMSBuildEditorConfig.editorconfig
+E:\InvestApp\obj\Debug\net9.0-windows\InvestApp.AssemblyInfoInputs.cache
+E:\InvestApp\obj\Debug\net9.0-windows\InvestApp.AssemblyInfo.cs
+E:\InvestApp\obj\Debug\net9.0-windows\InvestApp.csproj.CoreCompileInputs.cache
+E:\InvestApp\obj\Debug\net9.0-windows\InvestApp.dll
+E:\InvestApp\obj\Debug\net9.0-windows\refint\InvestApp.dll
+E:\InvestApp\obj\Debug\net9.0-windows\InvestApp.pdb
+E:\InvestApp\obj\Debug\net9.0-windows\InvestApp.genruntimeconfig.cache
+E:\InvestApp\obj\Debug\net9.0-windows\ref\InvestApp.dll
+E:\InvestApp\bin\Debug\net9.0-windows\FontAwesome.Sharp.dll
+E:\InvestApp\obj\Debug\net9.0-windows\InvestApp.csproj.AssemblyReference.cache
+E:\InvestApp\obj\Debug\net9.0-windows\InvestApp.csproj.Up2Date
