@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace Invest_Application
@@ -17,13 +17,13 @@ namespace Invest_Application
         public static readonly string stockAPIFile = Path.Combine(APIequivalentFolder, "stock.txt");
         public static readonly string cryptoAPIFile = Path.Combine(APIequivalentFolder, "crypto.txt");
 
-        public static readonly string loginStateFile = Path.Combine(dataPath, "loginStatus.txt");
+        public static readonly string loginStateFile = Path.Combine(dataPath, "loginStatus.json");
 
 
 
         public static string GetUserFile(string userName)
         {
-            return Path.Combine(usersFolder, "userName");
+            return Path.Combine(usersFolder, "userName") + ".json";
         }
 
         public static string GetUserAssetsFolder(string userName)
@@ -68,6 +68,45 @@ namespace Invest_Application
         public static string GetCryptoAPIFile()
         {
             return cryptoAPIFile;
+        }
+
+        public static string GetLoginStateFile()
+        {
+            return loginStateFile;
+        }
+
+        public static void EnsureDataStructure()
+        {
+
+            if (!Directory.Exists(dataPath))
+                Directory.CreateDirectory(dataPath);
+
+            if (!Directory.Exists(dataBaseFolder))
+                Directory.CreateDirectory(dataBaseFolder);
+
+            if (!Directory.Exists(usersFolder))
+                Directory.CreateDirectory(usersFolder);
+
+            if (!Directory.Exists(assetsFolder))
+                Directory.CreateDirectory(assetsFolder);
+
+            if (!Directory.Exists(APIequivalentFolder))
+                Directory.CreateDirectory(APIequivalentFolder);
+
+            CreateEmptyFileIfNotExists(goldAPIFile);
+            CreateEmptyFileIfNotExists(realEstateAPIFile);
+            CreateEmptyFileIfNotExists(stockAPIFile);
+            CreateEmptyFileIfNotExists(cryptoAPIFile);
+
+            CreateEmptyFileIfNotExists(loginStateFile);
+        }
+
+        private static void CreateEmptyFileIfNotExists(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                File.WriteAllText(filePath, string.Empty);
+            }
         }
     }
 }
