@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -76,15 +76,8 @@ namespace Invest_Application
             }
             for (int i = 0; ; i++)
             {
-                string currPath;
-                if (i != 0)
-                {
-                    currPath = Path.Combine(folder, $"{asset.Name}{i}");
-                }
-                else
-                {
-                    currPath = Path.Combine(folder, asset.Name);
-                }
+                string fileName = (i == 0) ? asset.Name : $"{asset.Name}-{i}";
+                string currPath = Path.Combine(folder, fileName + ".json");
                 if (!File.Exists(currPath))
                 {
                     var jsonString = JsonSerializer.Serialize(asset);
