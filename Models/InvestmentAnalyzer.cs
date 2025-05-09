@@ -21,7 +21,7 @@ namespace Invest_Application
             decimal totalSpent = 0;
             foreach (var asset in assets)
             {
-                totalSpent += asset.PurchasePrice;
+                totalSpent += asset.PurchasePrice() * asset.Quantity;
             }
             return totalSpent;
         }
@@ -50,7 +50,7 @@ namespace Invest_Application
             decimal totalSpent = 0;
             foreach (var asset in assets)
             {
-                totalSpent += asset.PurchasePrice;
+                totalSpent += asset.PurchasePrice() * asset.Quantity;
             }
             return totalSpent;
         }
@@ -80,7 +80,7 @@ namespace Invest_Application
             decimal totalSpent = 0;
             foreach (var asset in assets)
             {
-                totalSpent += asset.PurchasePrice;
+                totalSpent += asset.PurchasePrice() * asset.Quantity;
             }
             return totalSpent;
         }
@@ -109,7 +109,7 @@ namespace Invest_Application
             decimal totalSpent = 0;
             foreach (var asset in assets)
             {
-                totalSpent += asset.PurchasePrice;
+                totalSpent += asset.PurchasePrice() * asset.Quantity;
             }
             return totalSpent;
         }
