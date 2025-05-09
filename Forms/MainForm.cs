@@ -165,6 +165,37 @@ namespace InvestApp.Forms
                 AutoSize = true
             };
 
+            // Edit Button
+            IconButton btnEdit = new IconButton
+            {
+                IconChar = IconChar.Edit,
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(40, 40),
+                IconColor = Color.FromArgb(255, 193, 7), // Yellow
+                BackColor = Color.Transparent,
+                Cursor = Cursors.Hand,
+                Location = new Point(assetPanel.Width - 100, 30),
+                Anchor = AnchorStyles.Right
+            };
+            btnEdit.FlatAppearance.BorderSize = 0;
+            btnEdit.Click += (s, e) => { /* Edit functionality will be added later */ };
+
+            // Delete Button
+            IconButton btnDelete = new IconButton
+            {
+                IconChar = IconChar.TrashAlt,
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(40, 40),
+                IconColor = Color.FromArgb(231, 76, 60), // Red
+                BackColor = Color.Transparent,
+                Cursor = Cursors.Hand,
+                Location = new Point(assetPanel.Width - 50, 30),
+                Anchor = AnchorStyles.Right
+            };
+            btnDelete.FlatAppearance.BorderSize = 0;
+            btnDelete.Click += (s, e) => { /* Delete functionality will be added later */ };
+
+
             // Horizontal Line
             Panel linePanel = new Panel
             {
@@ -175,7 +206,8 @@ namespace InvestApp.Forms
 
             assetPanel.Controls.AddRange(new Control[] {
                 lblName, lblQuantity, lblPurchase,
-                lblCurrentValue, lblROI, linePanel
+                lblCurrentValue, lblROI, linePanel,
+                btnEdit, btnDelete
             });
 
             return assetPanel;
