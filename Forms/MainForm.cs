@@ -106,14 +106,97 @@ namespace InvestApp.Forms
             UpdateAddButtonPosition();
         }
 
+        private Panel CreateAssetInfoPanel(Asset asset)
+        {
+            Panel assetPanel = new Panel
+            {
+                Width = panelDesktop.Width - 40,
+                Height = 100,
+                Padding = new Padding(20),
+                BackColor = Color.White,
+                Margin = new Padding(0, 0, 0, 10)
+            };
+
+            // Asset Name
+            Label lblName = new Label
+            {
+                Text = asset.Name,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Location = new Point(20, 10),
+                AutoSize = true
+            };
+
+            // Quantity
+            Label lblQuantity = new Label
+            {
+                Text = $"Quantity: {asset.Quantity}",
+                Font = new Font("Segoe UI", 10),
+                Location = new Point(20, 40),
+                AutoSize = true
+            };
+
+            // Purchase Info
+            Label lblPurchase = new Label
+            {
+                Text = $"Purchase: ${asset.PurchasePrice():N2} on {asset.PurchaseDate:d}",
+                Font = new Font("Segoe UI", 10),
+                Location = new Point(200, 40),
+                AutoSize = true
+            };
+
+            // Current Value
+            decimal currentValue = asset.CurrentPrice();
+            Label lblCurrentValue = new Label
+            {
+                Text = $"Current Value: ${currentValue:N2}",
+                Font = new Font("Segoe UI", 10),
+                Location = new Point(460, 40),
+                AutoSize = true
+            };
+
+            // ROI
+            decimal roi = asset.CalculateROI();
+            Label lblROI = new Label
+            {
+                Text = $"ROI: {roi:P2}",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                ForeColor = roi >= 0 ? Color.FromArgb(39, 174, 96) : Color.FromArgb(231, 76, 60),
+                Location = new Point(700, 40),
+                AutoSize = true
+            };
+
+            // Horizontal Line
+            Panel linePanel = new Panel
+            {
+                Height = 1,
+                BackColor = Color.FromArgb(200, 200, 200),
+                Dock = DockStyle.Bottom
+            };
+
+            assetPanel.Controls.AddRange(new Control[] {
+                lblName, lblQuantity, lblPurchase,
+                lblCurrentValue, lblROI, linePanel
+            });
+
+            return assetPanel;
+        }
+
         private void UpdateAddButtonPosition()
         {
             if (btnAdd != null)
             {
+                // Position the button at bottom right with proper margins
                 btnAdd.Location = new Point(
-                    panelDesktop.Width - btnAdd.Width - 30,
-                    panelDesktop.Height - btnAdd.Height - 30
+                    panelDesktop.ClientSize.Width - btnAdd.Width - 30,
+                    panelDesktop.ClientSize.Height - btnAdd.Height - 30
                 );
+
+                // Ensure the button is visible and on top
+                btnAdd.Visible = true;
+                btnAdd.BringToFront();
+
+                // Set proper anchor to maintain position when form resizes
+                btnAdd.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             }
         }
 
@@ -143,16 +226,55 @@ namespace InvestApp.Forms
             // Clear desktop panel
             panelDesktop.Controls.Clear();
 
-            // Initialize ADD button if it doesn't exist
+            // Create scrollable panel
+            Panel scrollPanel = new Panel
+            {
+                AutoScroll = true,
+                Dock = DockStyle.Fill,
+                Padding = new Padding(20)
+            };
+
+            // Get assets based on type
+            List<Asset> assets = new List<Asset>();
+            switch (assetType)
+            {
+                case "Gold":
+                    assets = DatabaseOrganizer.GetAllUserGold(currentUser.Username).ToList<Asset>();
+                    break;
+                case "Crypto":
+                    assets = DatabaseOrganizer.GetAllUserCrypto(currentUser.Username).ToList<Asset>();
+                    break;
+                case "RealEstate":
+                    assets = DatabaseOrganizer.GetAllUserRealEstate(currentUser.Username).ToList<Asset>();
+                    break;
+                case "Stock":
+                    assets = DatabaseOrganizer.GetAllUserStock(currentUser.Username).ToList<Asset>();
+                    break;
+            }
+
+            // Add asset panels
+            int yOffset = 0;
+            foreach (var asset in assets)
+            {
+                Panel assetPanel = CreateAssetInfoPanel(asset);
+                assetPanel.Location = new Point(0, yOffset);
+                scrollPanel.Controls.Add(assetPanel);
+                yOffset += assetPanel.Height + 10;
+            }
+
+            // Add the scroll panel to desktop
+            panelDesktop.Controls.Add(scrollPanel);
+
+            // Initialize ADD button if needed
+            // Add after panelDesktop.Controls.Add(scrollPanel);
             if (btnAdd == null)
             {
                 InitializeAddButton();
             }
-
-            // Show and update ADD button
             btnAdd.Tag = assetType;
             btnAdd.Visible = true;
             btnAdd.BringToFront();
+            UpdateAddButtonPosition();
             panelDesktop.Controls.Add(btnAdd);
             UpdateAddButtonPosition();
 

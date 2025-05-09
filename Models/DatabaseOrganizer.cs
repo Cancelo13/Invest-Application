@@ -210,17 +210,15 @@ namespace Invest_Application
             return ExtractDecimalFromFile(AppPaths.GetCryptoAPIFile());
         }
 
-        private static List<Asset> GetAllUserAsset(string folderPath)
+        private static List<T> GetAllUserAsset<T>(string folderPath) where T : Asset
         {
-            List<Asset> assets = new List<Asset>();
-
+            List<T> assets = new List<T>();
             if (Directory.Exists(folderPath))
             {
                 string[] files = Directory.GetFiles(folderPath);
-
                 foreach (string file in files)
                 {
-                    Asset? asset = JsonOrganizer.GetAssetFromDB<Asset>(file);
+                    T? asset = JsonOrganizer.GetAssetFromDB<T>(file);
                     if (asset != null)
                     {
                         assets.Add(asset);
@@ -231,28 +229,28 @@ namespace Invest_Application
         }
         public static List<Gold> GetAllUserGold(string username)
         {
-            return GetAllUserAsset(AppPaths.GetUserGoldFolder(username))
+            return GetAllUserAsset<Gold>(AppPaths.GetUserGoldFolder(username))
                    .OfType<Gold>()
                    .ToList();
         }
 
         public static List<Stock> GetAllUserStock(string username)
         {
-            return GetAllUserAsset(AppPaths.GetUserStockFolder(username))
+            return GetAllUserAsset<Stock>(AppPaths.GetUserStockFolder(username))
                    .OfType<Stock>()
                    .ToList();
         }
 
         public static List<RealEstate> GetAllUserRealEstate(string username)
         {
-            return GetAllUserAsset(AppPaths.GetUserRealEstateFolder(username))
+            return GetAllUserAsset<RealEstate>(AppPaths.GetUserRealEstateFolder(username))
                    .OfType<RealEstate>()
                    .ToList();
         }
 
         public static List<Crypto> GetAllUserCrypto(string username)
         {
-            return GetAllUserAsset(AppPaths.GetUserCryptoFolder(username))
+            return GetAllUserAsset<Crypto>(AppPaths.GetUserCryptoFolder(username))
                    .OfType<Crypto>()
                    .ToList();
         }

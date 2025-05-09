@@ -39,15 +39,40 @@ namespace Invest_Application
 
             string json = File.ReadAllText(filePath).Trim();
             if (string.IsNullOrWhiteSpace(json)) return null;
+
             try
             {
-                return JsonSerializer.Deserialize<T>(json);
-            }
-            catch (JsonException)
-            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
 
+                // Deserialize to a temporary object to get the basic properties
+                using JsonDocument document = JsonDocument.Parse(json);
+                var root = document.RootElement;
+
+                // Extract the properties
+                string name = root.GetProperty("Name").GetString() ?? "";
+                int quantity = root.GetProperty("Quantity").GetInt32();
+                decimal purchasePrice = root.GetProperty("PurchasePrice").GetDecimal();
+                DateTime purchaseDate = root.GetProperty("PurchaseDate").GetDateTime();
+
+                // Create the concrete type based on T
+                if (typeof(T) == typeof(Gold))
+                    return (T)(Asset)new Gold(name, quantity, purchasePrice, purchaseDate);
+                else if (typeof(T) == typeof(Stock))
+                    return (T)(Asset)new Stock(name, quantity, purchasePrice, purchaseDate);
+                else if (typeof(T) == typeof(Crypto))
+                    return (T)(Asset)new Crypto(name, quantity, purchasePrice, purchaseDate);
+                else if (typeof(T) == typeof(RealEstate))
+                    return (T)(Asset)new RealEstate(name, quantity, purchasePrice, purchaseDate);
+                else
+                    throw new ArgumentException($"Unsupported asset type: {typeof(T).Name}");
             }
-            return null;
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
