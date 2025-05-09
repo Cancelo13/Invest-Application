@@ -82,8 +82,7 @@ namespace InvestApp.Forms
                 if (user.Password == password)
                 {
                     JsonOrganizer.SaveLogin(user);
-                    this.Hide();
-                    new LoaderForm().Show();
+                    validLogin = true;
                 }
                 else
                 {
@@ -94,7 +93,7 @@ namespace InvestApp.Forms
             if (validLogin)
             {
                 this.Hide();
-                new MainForm().Show();
+                new LoaderForm().Show();
             }
             else
             {
