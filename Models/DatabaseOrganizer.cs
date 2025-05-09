@@ -84,16 +84,11 @@ namespace Invest_Application
             {
                 throw new DirectoryNotFoundException("User asset not exist");
             }
-            for (int i = 0; ; i++)
+            string currPath = Path.Combine(folder, asset.id + ".json");
+            if (!File.Exists(currPath))
             {
-                string fileName = (i == 0) ? asset.Name : $"{asset.Name}-{i}";
-                string currPath = Path.Combine(folder, fileName + ".json");
-                if (!File.Exists(currPath))
-                {
-                    var jsonString = JsonSerializer.Serialize(asset);
-                    File.WriteAllText(currPath, jsonString);
-                    break;
-                }
+                var jsonString = JsonSerializer.Serialize(asset);
+                File.WriteAllText(currPath, jsonString);
             }
         }
 
@@ -119,6 +114,7 @@ namespace Invest_Application
 
         public static void DeleteUserGold(string username, string fileName)
         {
+            fileName += ".json";
             string filePath = Path.Combine(AppPaths.GetUserGoldFolder(username), fileName);
             if (File.Exists(filePath))
             {
@@ -128,6 +124,7 @@ namespace Invest_Application
 
         public static void DeleteUserRealEstate(string username, string fileName)
         {
+            fileName += ".json";
             string filePath = Path.Combine(AppPaths.GetUserRealEstateFolder(username), fileName);
             if (File.Exists(filePath))
             {
@@ -137,6 +134,7 @@ namespace Invest_Application
 
         public static void DeleteUserStock(string username, string fileName)
         {
+            fileName += ".json";
             string filePath = Path.Combine(AppPaths.GetUserStockFolder(username), fileName);
             if (File.Exists(filePath))
             {
@@ -146,6 +144,7 @@ namespace Invest_Application
 
         public static void DeleteUserCrypto(string username, string fileName)
         {
+            fileName += ".json";
             string filePath = Path.Combine(AppPaths.GetUserCryptoFolder(username), fileName);
             if (File.Exists(filePath))
             {
