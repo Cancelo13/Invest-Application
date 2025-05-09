@@ -92,8 +92,7 @@ namespace InvestApp.Forms
 
             if (validLogin)
             {
-                this.Hide();
-                new LoaderForm().Show();
+                Application.Restart();
             }
             else
             {

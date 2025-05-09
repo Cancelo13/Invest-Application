@@ -10,14 +10,40 @@ namespace InvestApp.Forms
         private Panel leftBorderBtn;
         private Form currentChildForm;
         private User currentUser;
+        private IconButton btnAdd;
 
         public MainForm(User user)
         {
             InitializeComponent();
+            leftBorderBtn = new Panel
+            {
+                Size = new Size(7, 60),
+                Visible = false
+            };
+            panelMenu.Controls.Add(leftBorderBtn);
+
+            // ...existing code...
             currentUser = user;
             this.MouseDown += Form_MouseDown;
             LoadUserInfo();
+            InitializeAddButton();
             this.Load += (s, e) => ShowUserProfile();
+            this.Resize += (s, e) => UpdateAddButtonPosition();
+        }
+
+        private void panelProfile_Click(object sender, EventArgs e)
+        {
+            // Clear any active button highlighting
+            DisableButton();
+
+            // Hide the ADD button
+            if (btnAdd != null)
+            {
+                btnAdd.Visible = false;
+            }
+
+            // Show profile content
+            ShowUserProfile();
         }
 
         private void LoadUserInfo()
@@ -49,10 +75,45 @@ namespace InvestApp.Forms
                 currentBtn.TextImageRelation = TextImageRelation.TextBeforeImage;
                 currentBtn.ImageAlign = ContentAlignment.MiddleRight;
 
+                // Left border button
                 leftBorderBtn.BackColor = color;
                 leftBorderBtn.Location = new Point(0, currentBtn.Location.Y);
                 leftBorderBtn.Visible = true;
                 leftBorderBtn.BringToFront();
+            }
+        }
+
+        private void InitializeAddButton()
+        {
+            btnAdd = new IconButton
+            {
+                Text = "ADD",
+                IconChar = IconChar.Plus,
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(150, 50),
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                ForeColor = Color.White,
+                IconColor = Color.White,
+                TextImageRelation = TextImageRelation.ImageBeforeText,
+                BackColor = Color.FromArgb(95, 77, 221),
+                Cursor = Cursors.Hand,
+                Visible = false,
+                Padding = new Padding(10, 0, 0, 0)
+            };
+            btnAdd.FlatAppearance.BorderSize = 0;
+            btnAdd.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            panelDesktop.Controls.Add(btnAdd);
+            UpdateAddButtonPosition();
+        }
+
+        private void UpdateAddButtonPosition()
+        {
+            if (btnAdd != null)
+            {
+                btnAdd.Location = new Point(
+                    panelDesktop.Width - btnAdd.Width - 30,
+                    panelDesktop.Height - btnAdd.Height - 30
+                );
             }
         }
 
@@ -74,6 +135,31 @@ namespace InvestApp.Forms
             panelAssetsSubmenu.Visible = !panelAssetsSubmenu.Visible;
         }
 
+        private void AssetButton_Click(object sender, EventArgs e)
+        {
+            IconButton clickedButton = sender as IconButton;
+            string assetType = clickedButton.Text;
+
+            // Clear desktop panel
+            panelDesktop.Controls.Clear();
+
+            // Initialize ADD button if it doesn't exist
+            if (btnAdd == null)
+            {
+                InitializeAddButton();
+            }
+
+            // Show and update ADD button
+            btnAdd.Tag = assetType;
+            btnAdd.Visible = true;
+            btnAdd.BringToFront();
+            panelDesktop.Controls.Add(btnAdd);
+            UpdateAddButtonPosition();
+
+            // Activate button styling
+            ActivateButton(clickedButton, Color.FromArgb(95, 77, 221));
+        }
+
         private void btnExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -84,14 +170,23 @@ namespace InvestApp.Forms
             if (MessageBox.Show("Are you sure you want to logout?", "Logout",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
+                File.WriteAllText(AppPaths.GetLoginStateFile(), "");
                 Application.Restart();
             }
         }
 
         private void ShowUserProfile()
         {
+            // Clear desktop panel
+            panelDesktop.Controls.Clear();
+
+            // Hide ADD button if it exists
+            if (btnAdd != null)
+            {
+                btnAdd.Visible = false;
+            }
+
             // This is a placeholder for when you implement the profile form
-            // You'll replace this with actual profile form showing logic
             panelProfile.BringToFront();
         }
 

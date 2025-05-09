@@ -52,6 +52,10 @@ namespace InvestApp.Forms
             this.iconProfile.Location = new Point(20, 20);
             this.iconProfile.BackColor = Color.Transparent;
 
+            this.panelProfile.Click += panelProfile_Click;
+            this.iconProfile.Click += panelProfile_Click;
+            this.lblUserName.Click += panelProfile_Click;
+
             // Username Label
             this.lblUserName.Text = "Name";
             this.lblUserName.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
@@ -227,7 +231,8 @@ namespace InvestApp.Forms
             btn.Dock = DockStyle.None;
             btn.TextAlign = ContentAlignment.MiddleLeft;
             btn.Padding = new Padding(40, 0, 0, 0);
-            btn.Click += (s, e) => { /* Placeholder for asset click */ };
+            btn.Click += AssetButton_Click;  // Replace the existing placeholder click handler
+
         }
 
         private Panel panelMenu;
