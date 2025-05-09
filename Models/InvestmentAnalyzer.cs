@@ -6,6 +6,7 @@ namespace Invest_Application
     {
         private decimal GetAssetCurrentValue(string folderPath)
         {
+            
             decimal totalGain = 0;
             if (Directory.Exists(folderPath))
             {
