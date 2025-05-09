@@ -28,6 +28,7 @@ namespace Invest_Application
 {
     public static class DatabaseOrganizer
     {
+
         public static void SaveUser(User user)
         {
             if (!IsUserExists(user.Username))
