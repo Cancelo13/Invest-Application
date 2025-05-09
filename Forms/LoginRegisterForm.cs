@@ -102,6 +102,25 @@ namespace InvestApp.Forms
             }
         }
 
+        bool validUsername(string username)
+        {
+            // Username must be 4-20 characters, alphanumeric only
+            return !string.IsNullOrWhiteSpace(username) &&
+                   username.Length >= 4 &&
+                   username.Length <= 20 &&
+                   username.All(char.IsLetterOrDigit);
+        }
+
+        bool validPassword(string password)
+        {
+            // Password must be at least 6 characters and contain a letter and a digit
+            return !string.IsNullOrWhiteSpace(password) &&
+                   password.Length >= 6 &&
+                   password.Any(char.IsLetter) &&
+                   password.Any(char.IsDigit);
+        }
+
+
         private void HandleRegister()
         {
             string name = txtName.Text;
@@ -117,15 +136,35 @@ namespace InvestApp.Forms
                 return;
             }
 
+            if (DatabaseOrganizer.IsUserExists(username))
+            {
+                MessageBox.Show("Username is already taken, try another one", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!validUsername(username))
+            {
+                MessageBox.Show("Please enter a valid username", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!validPassword(password))
+            {
+                MessageBox.Show("Please enter a valid password", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             if (password != confirmPassword)
             {
                 MessageBox.Show("Passwords do not match", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
+            User user = new User(name, username, password);
+            DatabaseOrganizer.SaveUser(user);
             // For demo, always succeed
-            MessageBox.Show("Registration successful!", "Success",
+            MessageBox.Show("Registration successful now you can login", "Success",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             SetLoginMode();
             ClearFields();
