@@ -2,7 +2,7 @@
 {
     public class RealEstate : Asset
     {
-        public RealEstate(string name, int quantity, decimal purchasePrice, DateTime purchaseDate, decimal currentPrice)
+        public RealEstate(string name, int quantity, decimal purchasePrice, DateTime purchaseDate)
             : base(name, quantity, purchasePrice, purchaseDate) { }
 
         public override decimal CurrentPrice()
