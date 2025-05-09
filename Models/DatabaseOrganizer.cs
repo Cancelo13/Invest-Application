@@ -210,7 +210,7 @@ namespace Invest_Application
             return ExtractDecimalFromFile(AppPaths.GetCryptoAPIFile());
         }
 
-        public static List<Asset> GetAllUserAsset(string folderPath)
+        private static List<Asset> GetAllUserAsset(string folderPath)
         {
             List<Asset> assets = new List<Asset>();
 
