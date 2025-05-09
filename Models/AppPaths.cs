@@ -17,7 +17,8 @@ namespace Invest_Application
         public static readonly string stockAPIFile = Path.Combine(APIequivalentFolder, "stock.txt");
         public static readonly string cryptoAPIFile = Path.Combine(APIequivalentFolder, "crypto.txt");
 
-        public static readonly string loginStateFile = Path.Combine(dataPath, "loginStatus.json");
+        public static readonly string cookiesFolder = Path.Combine(dataPath, "cookies");
+        public static readonly string loginStateFile = Path.Combine(cookiesFolder, "loginStatus.json");
 
 
 
@@ -98,11 +99,13 @@ namespace Invest_Application
             if (!Directory.Exists(APIequivalentFolder))
                 Directory.CreateDirectory(APIequivalentFolder);
 
+            if (!Directory.Exists(cookiesFolder))
+                Directory.CreateDirectory(cookiesFolder);
+
             CreateEmptyFileIfNotExists(goldAPIFile, "4800");
             CreateEmptyFileIfNotExists(realEstateAPIFile, "1.15");
             CreateEmptyFileIfNotExists(stockAPIFile, "50000");
             CreateEmptyFileIfNotExists(cryptoAPIFile, "1000000");
-
             CreateEmptyFileIfNotExists(loginStateFile, "");
         }
 

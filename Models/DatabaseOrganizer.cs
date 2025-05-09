@@ -210,5 +210,52 @@ namespace Invest_Application
             return ExtractDecimalFromFile(AppPaths.GetCryptoAPIFile());
         }
 
+        public static List<Asset> GetAllUserAsset(string folderPath)
+        {
+            List<Asset> assets = new List<Asset>();
+
+            if (Directory.Exists(folderPath))
+            {
+                string[] files = Directory.GetFiles(folderPath);
+
+                foreach (string file in files)
+                {
+                    Asset? asset = JsonOrganizer.GetAssetFromDB<Asset>(file);
+                    if (asset != null)
+                    {
+                        assets.Add(asset);
+                    }
+                }
+            }
+            return assets;
+        }
+        public static List<Gold> GetAllUserGold(string username)
+        {
+            return GetAllUserAsset(AppPaths.GetUserGoldFolder(username))
+                   .OfType<Gold>()
+                   .ToList();
+        }
+
+        public static List<Stock> GetAllUserStock(string username)
+        {
+            return GetAllUserAsset(AppPaths.GetUserStockFolder(username))
+                   .OfType<Stock>()
+                   .ToList();
+        }
+
+        public static List<RealEstate> GetAllUserRealEstate(string username)
+        {
+            return GetAllUserAsset(AppPaths.GetUserRealEstateFolder(username))
+                   .OfType<RealEstate>()
+                   .ToList();
+        }
+
+        public static List<Crypto> GetAllUserCrypto(string username)
+        {
+            return GetAllUserAsset(AppPaths.GetUserCryptoFolder(username))
+                   .OfType<Crypto>()
+                   .ToList();
+        }
+
     }
 }

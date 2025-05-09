@@ -4,53 +4,26 @@ namespace Invest_Application
 {
     public class InvestmentAnalyzer
     {
-        private decimal GetAssetCurrentValue(string folderPath)
-        {
-            
-            decimal totalGain = 0;
-            if (Directory.Exists(folderPath))
-            {
-                string[] files = Directory.GetFiles(folderPath);
-
-                foreach (string file in files)
-                {
-                    Asset? asset = JsonOrganizer.GetAssetFromDB<Asset>(file);
-                    if (asset != null)
-                    {
-                        totalGain += asset.CurrentPrice();
-                    }
-                }
-            }
-            return totalGain;
-        }
-        private decimal GetAssetPurchaseValue(string folderPath)
-        {
-            decimal totalSpent = 0;
-            if (Directory.Exists(folderPath))
-            {
-                string[] files = Directory.GetFiles(folderPath);
-
-                foreach (string file in files)
-                {
-                    Asset? asset = JsonOrganizer.GetAssetFromDB<Asset>(file);
-                    if (asset != null)
-                    {
-                        totalSpent += asset.PurchasePrice;
-                    }
-                }
-            }
-            return totalSpent;
-        }
-
-
         public decimal GetGoldCurrentValue(string username)
         {
-            return GetAssetCurrentValue(AppPaths.GetUserGoldFolder(username));
+            List<Gold> assets = DatabaseOrganizer.GetAllUserGold(username);
+            decimal totalGain = 0;
+            foreach (var asset in assets)
+            {
+                totalGain += asset.CurrentPrice();
+            }
+            return totalGain;
         }
 
         public decimal GetGoldPurchaseValue(string username)
         {
-            return GetAssetPurchaseValue(AppPaths.GetUserGoldFolder(username));
+            List<Gold> assets = DatabaseOrganizer.GetAllUserGold(username);
+            decimal totalSpent = 0;
+            foreach (var asset in assets)
+            {
+                totalSpent += asset.PurchasePrice;
+            }
+            return totalSpent;
         }
 
         public decimal GetGoldROI(string username)
@@ -62,12 +35,24 @@ namespace Invest_Application
 
         public decimal GetRealEstateCurrentValue(string username)
         {
-            return GetAssetCurrentValue(AppPaths.GetUserRealEstateFolder(username));
+            List<RealEstate> assets = DatabaseOrganizer.GetAllUserRealEstate(username);
+            decimal totalGain = 0;
+            foreach (var asset in assets)
+            {
+                totalGain += asset.CurrentPrice();
+            }
+            return totalGain;
         }
 
         public decimal GetRealEstatePurchaseValue(string username)
         {
-            return GetAssetPurchaseValue(AppPaths.GetUserRealEstateFolder(username));
+            List<RealEstate> assets = DatabaseOrganizer.GetAllUserRealEstate(username);
+            decimal totalSpent = 0;
+            foreach (var asset in assets)
+            {
+                totalSpent += asset.PurchasePrice;
+            }
+            return totalSpent;
         }
 
         public decimal GetRealEstateROI(string username)
@@ -77,14 +62,27 @@ namespace Invest_Application
             return (gain - spent) / spent;
         }
 
+
         public decimal GetStockCurrentValue(string username)
         {
-            return GetAssetCurrentValue(AppPaths.GetUserStockFolder(username));
+            List<Stock> assets = DatabaseOrganizer.GetAllUserStock(username);
+            decimal totalGain = 0;
+            foreach (var asset in assets)
+            {
+                totalGain += asset.CurrentPrice();
+            }
+            return totalGain;
         }
 
         public decimal GetStockPurchaseValue(string username)
         {
-            return GetAssetPurchaseValue(AppPaths.GetUserStockFolder(username));
+            List<Stock> assets = DatabaseOrganizer.GetAllUserStock(username);
+            decimal totalSpent = 0;
+            foreach (var asset in assets)
+            {
+                totalSpent += asset.PurchasePrice;
+            }
+            return totalSpent;
         }
 
         public decimal GetStockROI(string username)
@@ -96,12 +94,24 @@ namespace Invest_Application
 
         public decimal GetCryptoCurrentValue(string username)
         {
-            return GetAssetCurrentValue(AppPaths.GetUserCryptoFolder(username));
+            List<Crypto> assets = DatabaseOrganizer.GetAllUserCrypto(username);
+            decimal totalGain = 0;
+            foreach (var asset in assets)
+            {
+                totalGain += asset.CurrentPrice();
+            }
+            return totalGain;
         }
 
         public decimal GetCryptoPurchaseValue(string username)
         {
-            return GetAssetPurchaseValue(AppPaths.GetUserCryptoFolder(username));
+            List<Crypto> assets = DatabaseOrganizer.GetAllUserCrypto(username);
+            decimal totalSpent = 0;
+            foreach (var asset in assets)
+            {
+                totalSpent += asset.PurchasePrice;
+            }
+            return totalSpent;
         }
 
         public decimal GetCryptoROI(string username)
