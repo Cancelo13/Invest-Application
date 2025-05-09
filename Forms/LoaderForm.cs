@@ -18,29 +18,11 @@ namespace InvestApp.Forms
         private async void LoaderForm_Load(object sender, EventArgs e)
         {
             AppPaths.EnsureDataStructure();
-            string filePath = AppPaths.GetLoginStateFile();
-
-            User? user = null;
-            if (File.Exists(filePath))
-            {
-                string json = File.ReadAllText(filePath).Trim();
-
-                if (!string.IsNullOrWhiteSpace(json))
-                {
-                    try
-                    {
-                        user = JsonSerializer.Deserialize<User>(json);
-                    }
-                    catch (JsonException)
-                    {
-                        File.WriteAllText(AppPaths.GetLoginStateFile(), "");
-                        user = null;
-                    }
-                }
-            }
+            User? user = JsonOrganizer.GetUserFromDB(AppPaths.GetLoginStateFile());
             await Task.Delay(500);
             if (user == null)
             {
+                File.WriteAllText(AppPaths.GetLoginStateFile(), "");
                 this.Hide();
                 new LoginRegisterForm().Show();
             }

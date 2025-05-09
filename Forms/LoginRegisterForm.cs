@@ -1,4 +1,5 @@
 using FontAwesome.Sharp;
+using Invest_Application;
 
 namespace InvestApp.Forms
 {
@@ -57,6 +58,7 @@ namespace InvestApp.Forms
                 HandleRegister();
         }
 
+
         private void HandleLogin()
         {
             string username = txtUsername.Text;
@@ -69,11 +71,36 @@ namespace InvestApp.Forms
                 return;
             }
 
-            // For demo, always succeed
-            MessageBox.Show("Login successful!", "Success",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-            this.Hide();
-            // TODO: Open main form
+            bool validLogin = true;
+            User? user = JsonOrganizer.GetUserFromDB(AppPaths.GetUserFile(username));
+            if (user == null)
+            {
+                validLogin = false;
+            }
+            else
+            {
+                if (user.Password == password)
+                {
+                    JsonOrganizer.SaveLogin(user);
+                    this.Hide();
+                    new LoaderForm().Show();
+                }
+                else
+                {
+                    validLogin = false;
+                }
+            }
+
+            if (validLogin)
+            {
+                this.Hide();
+                new MainForm().Show();
+            }
+            else
+            {
+                MessageBox.Show("Username or Password is incorrect", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void HandleRegister()
