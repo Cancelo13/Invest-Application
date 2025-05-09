@@ -2,10 +2,11 @@
 {
     public abstract class Asset
     {
-        public string Name { get; set; }
-        public int Quantity { get; set; }
-        private decimal _PurchasePrice { get; set; }
-        public DateTime PurchaseDate { get; set; }
+        public string Name { get; }
+        public int Quantity { get; }
+        private decimal _PurchasePrice { get; }
+        public DateTime PurchaseDate { get; }
+        public string id { get; }
 
         protected Asset(string name, int quantity, decimal purchasePrice, DateTime purchaseDate)
         {
@@ -13,6 +14,7 @@
             Quantity = quantity;
             _PurchasePrice = purchasePrice;
             PurchaseDate = purchaseDate;
+            id = DateTime.Now.ToString("yyyyMMddHHmmssfff");
         }
 
         public abstract decimal CurrentPrice();

@@ -108,7 +108,6 @@ namespace InvestApp.Forms
 
         private async void LoaderForm_Load(object sender, EventArgs e)
         {
-
             AppPaths.EnsureDataStructure();
             User? user = JsonOrganizer.GetUserFromDB(AppPaths.GetLoginStateFile());
             await Task.Delay(500);
