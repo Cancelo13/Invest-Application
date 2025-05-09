@@ -9,6 +9,7 @@ namespace InvestApp.Forms
         public LoaderForm()
         {
             InitializeComponent();
+            this.Load += LoaderForm_Load;
         }
 
         private async void LoaderForm_Load(object sender, EventArgs e)

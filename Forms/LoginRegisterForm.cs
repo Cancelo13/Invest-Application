@@ -10,6 +10,7 @@ namespace InvestApp.Forms
         {
             InitializeComponent();
             SetLoginMode();
+            this.MouseDown += Form_MouseDown;
         }
 
         private void SetLoginMode()
@@ -22,7 +23,7 @@ namespace InvestApp.Forms
             txtConfirmPassword.Visible = false;
             btnSubmit.Text = "LOGIN";
             btnSwitchMode.Text = "Need an account? Register";
-            this.Height = 400;
+            this.Height = 500;
         }
 
         private void SetRegisterMode()
@@ -35,7 +36,7 @@ namespace InvestApp.Forms
             txtConfirmPassword.Visible = true;
             btnSubmit.Text = "REGISTER";
             btnSwitchMode.Text = "Already have an account? Login";
-            this.Height = 500;
+            this.Height = 600;
         }
 
         private void btnSwitchMode_Click(object sender, EventArgs e)
@@ -63,13 +64,13 @@ namespace InvestApp.Forms
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Please enter both username and password", "Error", 
+                MessageBox.Show("Please enter both username and password", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             // For demo, always succeed
-            MessageBox.Show("Login successful!", "Success", 
+            MessageBox.Show("Login successful!", "Success",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.Hide();
             // TODO: Open main form
@@ -82,23 +83,23 @@ namespace InvestApp.Forms
             string password = txtPassword.Text;
             string confirmPassword = txtConfirmPassword.Text;
 
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(username) || 
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(username) ||
                 string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
             {
-                MessageBox.Show("Please fill in all fields", "Error", 
+                MessageBox.Show("Please fill in all fields", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (password != confirmPassword)
             {
-                MessageBox.Show("Passwords do not match", "Error", 
+                MessageBox.Show("Passwords do not match", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             // For demo, always succeed
-            MessageBox.Show("Registration successful!", "Success", 
+            MessageBox.Show("Registration successful!", "Success",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             SetLoginMode();
             ClearFields();
