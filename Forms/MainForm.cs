@@ -1,4 +1,6 @@
+using System.Runtime.InteropServices;
 using FontAwesome.Sharp;
+using Invest_Application;
 
 namespace InvestApp.Forms
 {
@@ -7,21 +9,32 @@ namespace InvestApp.Forms
         private IconButton currentBtn;
         private Panel leftBorderBtn;
         private Form currentChildForm;
+        private User currentUser;
 
-        public MainForm()
+        public MainForm(User user)
         {
             InitializeComponent();
-            CustomizeDesign();
+            currentUser = user;
+            this.MouseDown += Form_MouseDown;
+            LoadUserInfo();
         }
 
-        private void CustomizeDesign()
+        private void LoadUserInfo()
         {
-            this.panelMenu.BackColor = Color.FromArgb(30, 30, 45);
-            leftBorderBtn = new Panel();
-            leftBorderBtn.Size = new Size(7, 60);
-            panelMenu.Controls.Add(leftBorderBtn);
+            lblUserName.Text = currentUser.Name;
+            // Calculate total ROI
+            decimal totalROI = 0; // Replace with actual calculation
+            UpdateROIDisplay(totalROI);
         }
 
+        private void UpdateROIDisplay(decimal roi)
+        {
+            lblROI.Text = $"{roi:P2}";
+            Color roiColor = roi >= 0 ? Color.FromArgb(39, 174, 96) : Color.FromArgb(231, 76, 60);
+            lblROI.ForeColor = Color.White;
+            iconROI.IconColor = roiColor;
+            panelROI.BorderStyle = BorderStyle.FixedSingle;
+        }
         private void ActivateButton(object senderBtn, Color color)
         {
             if (senderBtn != null)
@@ -42,6 +55,29 @@ namespace InvestApp.Forms
             }
         }
 
+        private void btnAssets_Click(object sender, EventArgs e)
+        {
+            if (!panelAssetsSubmenu.Visible)
+            {
+                // Calculate position below Assets button
+                Point buttonPoint = btnAssets.PointToScreen(Point.Empty);
+                Point formPoint = this.PointToClient(buttonPoint);
+
+                panelAssetsSubmenu.Location = new Point(
+                    formPoint.X,
+                    formPoint.Y + btnAssets.Height
+                );
+
+                panelAssetsSubmenu.BringToFront();
+            }
+            panelAssetsSubmenu.Visible = !panelAssetsSubmenu.Visible;
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
         private void DisableButton()
         {
             if (currentBtn != null)
@@ -55,17 +91,19 @@ namespace InvestApp.Forms
             }
         }
 
-        private void OpenChildForm(Form childForm)
+        [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
+        private extern static void ReleaseCapture();
+
+        [DllImport("user32.DLL", EntryPoint = "SendMessage")]
+        private extern static void SendMessage(System.IntPtr hWnd, int wMsg, int wParam, int lParam);
+
+        private void Form_MouseDown(object sender, MouseEventArgs e)
         {
-            currentChildForm?.Close();
-            currentChildForm = childForm;
-            childForm.TopLevel = false;
-            childForm.FormBorderStyle = FormBorderStyle.None;
-            childForm.Dock = DockStyle.Fill;
-            panelDesktop.Controls.Add(childForm);
-            panelDesktop.Tag = childForm;
-            childForm.BringToFront();
-            childForm.Show();
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(this.Handle, 0x112, 0xf012, 0);
+            }
         }
     }
 }

@@ -29,7 +29,7 @@ namespace InvestApp.Forms
             else
             {
                 this.Hide();
-                new MainForm().Show();
+                new MainForm(user).Show();
             }
         }
     }
