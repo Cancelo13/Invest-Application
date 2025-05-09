@@ -19,12 +19,16 @@
 
         public virtual decimal PurchasePrice()
         {
+            return _PurchasePrice;
+        }
+        public virtual decimal TotalPurchasePrice()
+        {
             return _PurchasePrice * Quantity;
         }
 
         public virtual decimal CalculateROI()
         {
-            return (CurrentPrice() - PurchasePrice()) / PurchasePrice();
+            return (CurrentPrice() - TotalPurchasePrice()) / TotalPurchasePrice();
         }
     }
 }
