@@ -7,8 +7,13 @@
 
         public override decimal CurrentPrice()
         {
-            int years = PurchaseDate.Year - DateTime.Today.Year;
-            return Quantity * (DatabaseOrganizer.GetRealEstateMarketExponent() * PurchasePrice * years);
+            int years = DateTime.Today.Year - PurchaseDate.Year;
+            decimal total = PurchasePrice * Quantity;
+            for (int i = 1; i <= years; i++)
+            {
+                PurchasePrice *= DatabaseOrganizer.GetRealEstateMarketExponent();
+            }
+            return total;
         }
     }
 }
