@@ -77,6 +77,34 @@ namespace Invest_Application
             return user ?? throw new Exception("Failed to deserialize user data");
 
         }
+        public static void DeleteUserAsset(string username, Asset asset)
+        {
+            string filePath = "";
+            if (asset is Gold)
+            {
+                filePath = Path.Combine(AppPaths.GetUserGoldFolder(username), asset.id + ".json");
+            }
+            else if (asset is RealEstate)
+            {
+                filePath = Path.Combine(AppPaths.GetUserRealEstateFolder(username), asset.id + ".json");
+            }
+            else if (asset is Stock)
+            {
+                filePath = Path.Combine(AppPaths.GetUserStockFolder(username), asset.id + ".json");
+            }
+            else if (asset is Crypto)
+            {
+                filePath = Path.Combine(AppPaths.GetUserCryptoFolder(username), asset.id + ".json");
+            }
+            else
+            {
+                throw new InvalidCastException("Expected type of Gold, RealEstate, Stock, Crypto but received something else.");
+            }
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
 
         private static void SaveUserAsset(Asset asset, string folder)
         {
