@@ -129,10 +129,10 @@ namespace InvestApp.Forms
             this.btnZakat.Padding = new Padding(20, 0, 0, 0);
 
             // === ROI Panel ===
-            this.panelROI.Size = new Size(220, 70);
+            this.panelROI.Size = new Size(280, 70);  // Increased width from 220 to 280
             this.panelROI.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             this.panelROI.BackColor = Color.FromArgb(95, 77, 221);
-            this.panelROI.Location = new Point(this.Width - 420, 10);
+            this.panelROI.Location = new Point(this.Width - 520, 10);
 
             // ROI Icon
             this.iconROI.IconChar = IconChar.ChartLine;
@@ -151,10 +151,12 @@ namespace InvestApp.Forms
 
             // ROI Value
             this.lblROI.Text = "+12.5%";
-            this.lblROI.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            this.lblROI.ForeColor = Color.LimeGreen;
+            this.lblROI.Font = new Font("Segoe UI", 14F, FontStyle.Bold);  // Increased font size
+            this.lblROI.ForeColor = Color.White;
             this.lblROI.Location = new Point(60, 35);
-            this.lblROI.Size = new Size(120, 30);
+            this.lblROI.Size = new Size(200, 25);  // Increased width
+            this.lblROI.AutoSize = false;          // Fixed size
+            this.lblROI.TextAlign = ContentAlignment.MiddleLeft;
 
             // === Exit Button ===
             this.btnExit.IconChar = IconChar.Times;

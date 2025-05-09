@@ -50,7 +50,7 @@ namespace InvestApp.Forms
         {
             lblUserName.Text = currentUser.Name;
             // Calculate total ROI
-            decimal totalROI = 0; // Replace with actual calculation
+            decimal totalROI = InvestmentAnalyzer.GetTotalROI(currentUser.Username); // Replace with actual calculation
             UpdateROIDisplay(totalROI);
         }
 
