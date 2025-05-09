@@ -12,5 +12,12 @@ namespace Invest_Application
             Username = string.Empty;
             Password = string.Empty;
         }
+        public User(string name, string username, string password)
+        {
+            Name = name;
+            Username = username;
+            Password = password;
+        }
+
     }
 }
