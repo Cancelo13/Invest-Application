@@ -7,35 +7,25 @@ namespace InvestApp.Forms
     {
         private void InitializeComponent()
         {
-            // Panels
+            // Initialize all components
             this.panelMenu = new Panel();
             this.panelAssetsSubmenu = new Panel();
             this.panelProfile = new Panel();
             this.panelTop = new Panel();
             this.panelDesktop = new Panel();
-
-            // Profile
             this.iconProfile = new IconPictureBox();
             this.lblUserName = new Label();
-
-            // Asset Buttons
             this.btnAssets = new IconButton();
             this.btnGold = new IconButton();
             this.btnCrypto = new IconButton();
             this.btnRealEstate = new IconButton();
             this.btnStock = new IconButton();
-
-            // Zakat & Report
             this.btnZakat = new IconButton();
             this.btnReport = new IconButton();
-
-            // ROI
             this.panelROI = new Panel();
             this.lblROI = new Label();
             this.iconROI = new IconPictureBox();
             this.lblROITitle = new Label();
-
-            // Exit
             this.btnExit = new IconButton();
 
             // === Form Settings ===
@@ -43,35 +33,38 @@ namespace InvestApp.Forms
             this.FormBorderStyle = FormBorderStyle.None;
             this.BackColor = Color.FromArgb(30, 30, 45);
 
+            // === Top Panel ===
+            this.panelTop.Dock = DockStyle.Top;
+            this.panelTop.Height = 80;
+            this.panelTop.BackColor = Color.FromArgb(30, 30, 45);
+
+            // === Profile Panel (in top panel) ===
+            this.panelProfile.Size = new Size(300, 80);
+            this.panelProfile.Dock = DockStyle.Left;
+            this.panelProfile.BackColor = Color.FromArgb(95, 77, 221);
+            this.panelProfile.Cursor = Cursors.Hand;
+
+            // Profile Icon
+            this.iconProfile.IconChar = IconChar.UserCircle;
+            this.iconProfile.IconSize = 40;
+            this.iconProfile.IconColor = Color.White;
+            this.iconProfile.Size = new Size(40, 40);
+            this.iconProfile.Location = new Point(20, 20);
+            this.iconProfile.BackColor = Color.Transparent;
+
+            // Username Label
+            this.lblUserName.Text = "Name";
+            this.lblUserName.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            this.lblUserName.ForeColor = Color.White;
+            this.lblUserName.Location = new Point(70, 25);
+            this.lblUserName.Size = new Size(200, 30);
+            this.lblUserName.TextAlign = ContentAlignment.MiddleLeft;
+
             // === Left Menu Panel ===
             this.panelMenu.Size = new Size(300, this.Height);
             this.panelMenu.Dock = DockStyle.Left;
             this.panelMenu.BackColor = Color.FromArgb(30, 30, 45);
-
-            // === Profile Panel ===
-            this.panelProfile.Size = new Size(300, 120);
-            this.panelProfile.Dock = DockStyle.Top;
-            this.panelProfile.BackColor = Color.FromArgb(95, 77, 221);
-            this.panelProfile.Cursor = Cursors.Hand;
-            this.panelProfile.Click += (s, e) => { /* Placeholder for profile click */ };
-
-            // Profile Icon
-            this.iconProfile.IconChar = IconChar.UserCircle;
-            this.iconProfile.IconSize = 60;
-            this.iconProfile.IconColor = Color.White;
-            this.iconProfile.Size = new Size(60, 60);
-            this.iconProfile.Location = new Point(25, 30);
-            this.iconProfile.BackColor = Color.Transparent;
-            this.iconProfile.Click += (s, e) => { /* Placeholder for profile click */ };
-
-            // Username Label
-            this.lblUserName.Text = "Name";
-            this.lblUserName.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            this.lblUserName.ForeColor = Color.White;
-            this.lblUserName.Location = new Point(100, 40);
-            this.lblUserName.Size = new Size(180, 40);
-            this.lblUserName.TextAlign = ContentAlignment.MiddleLeft;
-            this.lblUserName.Click += (s, e) => { /* Placeholder for profile click */ };
+            this.panelMenu.Padding = new Padding(0, 0, 0, 0);
 
             // === Asset Button ===
             this.btnAssets.Text = "Assets";
@@ -92,8 +85,6 @@ namespace InvestApp.Forms
             this.panelAssetsSubmenu.BackColor = Color.FromArgb(40, 40, 60);
             this.panelAssetsSubmenu.Size = new Size(300, 200);
             this.panelAssetsSubmenu.Visible = false;
-            this.panelAssetsSubmenu.BringToFront();
-
 
             ConfigureAssetButton(btnCrypto, "Crypto", IconChar.Bitcoin);
             ConfigureAssetButton(btnGold, "Gold", IconChar.Coins);
@@ -104,10 +95,6 @@ namespace InvestApp.Forms
             btnGold.Location = new Point(0, 50);
             btnRealEstate.Location = new Point(0, 100);
             btnStock.Location = new Point(0, 150);
-
-            this.panelAssetsSubmenu.Controls.AddRange(new Control[] {
-                btnCrypto, btnGold, btnRealEstate, btnStock
-            });
 
             // === Report Button ===
             this.btnReport.Text = "Report";
@@ -122,7 +109,6 @@ namespace InvestApp.Forms
             this.btnReport.Dock = DockStyle.Bottom;
             this.btnReport.TextAlign = ContentAlignment.MiddleLeft;
             this.btnReport.Padding = new Padding(20, 0, 0, 0);
-            this.btnReport.Click += (s, e) => { /* Placeholder for report click */ };
 
             // === Zakat Button ===
             this.btnZakat.Text = "Zakat";
@@ -137,23 +123,20 @@ namespace InvestApp.Forms
             this.btnZakat.Dock = DockStyle.Bottom;
             this.btnZakat.TextAlign = ContentAlignment.MiddleLeft;
             this.btnZakat.Padding = new Padding(20, 0, 0, 0);
-            this.btnZakat.Click += (s, e) => { /* Placeholder for zakat click */ };
 
-            // === Top Panel ===
-            this.panelTop.Dock = DockStyle.Top;
-            this.panelTop.Height = 80;
-            this.panelTop.BackColor = Color.FromArgb(30, 30, 45);
-
-            // === ROI Panel (Top Right) ===
+            // === ROI Panel ===
             this.panelROI.Size = new Size(220, 70);
             this.panelROI.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             this.panelROI.BackColor = Color.FromArgb(95, 77, 221);
             this.panelROI.Location = new Point(this.Width - 420, 10);
+
             // ROI Icon
             this.iconROI.IconChar = IconChar.ChartLine;
             this.iconROI.IconSize = 32;
             this.iconROI.Size = new Size(32, 32);
             this.iconROI.Location = new Point(20, 20);
+            this.iconROI.IconColor = Color.White;
+            this.iconROI.BackColor = Color.Transparent;
 
             // ROI Title
             this.lblROITitle.Text = "ROI";
@@ -176,31 +159,58 @@ namespace InvestApp.Forms
             this.btnExit.FlatAppearance.BorderSize = 0;
             this.btnExit.Size = new Size(32, 32);
             this.btnExit.BackColor = Color.Transparent;
-            this.btnExit.Location = new Point(this.panelTop.Width - 42, 8); // 8px from top, 10px from right
+            this.btnExit.Location = new Point(this.panelTop.Width - 42, 8);  // Changed from this.Width
             this.btnExit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             this.btnExit.Cursor = Cursors.Hand;
             this.btnExit.Click += btnExit_Click;
-            this.panelTop.Controls.Add(this.btnExit);
+
+            // === Logout Button ===
+            this.btnLogout = new IconButton();
+            this.btnLogout.Text = "Logout";
+            this.btnLogout.IconChar = IconChar.SignOutAlt;
+            this.btnLogout.FlatStyle = FlatStyle.Flat;
+            this.btnLogout.FlatAppearance.BorderSize = 0;
+            this.btnLogout.Size = new Size(150, 50);
+            this.btnLogout.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+            this.btnLogout.ForeColor = Color.White;
+            this.btnLogout.IconColor = Color.White;
+            this.btnLogout.TextImageRelation = TextImageRelation.ImageBeforeText;
+            this.btnLogout.Dock = DockStyle.Bottom;
+            this.btnLogout.TextAlign = ContentAlignment.MiddleLeft;
+            this.btnLogout.Padding = new Padding(20, 0, 0, 0);
+            this.btnLogout.BackColor = Color.FromArgb(95, 77, 221);
+            this.btnLogout.Cursor = Cursors.Hand;
+            this.btnLogout.Click += btnLogout_Click;
 
             // === Desktop Panel ===
             this.panelDesktop.BackColor = Color.FromArgb(245, 245, 245);
             this.panelDesktop.Dock = DockStyle.Fill;
-            this.panelDesktop.Padding = new Padding(20);
 
-            // === Add controls ===
+            // === Add Controls in Correct Order ===
             this.panelProfile.Controls.AddRange(new Control[] { iconProfile, lblUserName });
-            this.panelMenu.Controls.Clear();
-            this.panelMenu.Controls.AddRange(new Control[] {
-                btnAssets,
-                panelProfile,
-                btnZakat,
-                btnReport
+            this.panelAssetsSubmenu.Controls.AddRange(new Control[] { btnCrypto, btnGold, btnRealEstate, btnStock });
+            this.panelROI.Controls.AddRange(new Control[] { iconROI, lblROITitle, lblROI });
+
+            this.panelTop.Controls.Clear();
+            this.panelTop.Controls.AddRange(new Control[] {
+                panelProfile,  // Profile panel on left
+                panelROI,      // ROI panel in middle-right
+                btnExit        // Exit button on far right
             });
 
-            this.panelROI.Controls.AddRange(new Control[] { iconROI, lblROITitle, lblROI });
-            this.panelTop.Controls.AddRange(new Control[] { panelROI, btnExit });
-            this.Controls.Add(panelAssetsSubmenu);
-            this.Controls.AddRange(new Control[] { panelDesktop, panelMenu, panelTop });
+            this.panelMenu.Controls.AddRange(new Control[] {
+                btnAssets,
+                btnZakat,
+                btnReport,
+                btnLogout
+            });
+
+            this.Controls.AddRange(new Control[] {
+                panelDesktop,
+                panelMenu,
+                panelTop,
+                panelAssetsSubmenu
+            });
         }
 
         private void ConfigureAssetButton(IconButton btn, string text, IconChar icon)
@@ -214,7 +224,7 @@ namespace InvestApp.Forms
             btn.ForeColor = Color.White;
             btn.IconColor = Color.White;
             btn.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btn.Dock = DockStyle.None; // Remove Dock
+            btn.Dock = DockStyle.None;
             btn.TextAlign = ContentAlignment.MiddleLeft;
             btn.Padding = new Padding(40, 0, 0, 0);
             btn.Click += (s, e) => { /* Placeholder for asset click */ };
@@ -239,5 +249,6 @@ namespace InvestApp.Forms
         private IconButton btnExit;
         private IconButton btnZakat;
         private IconButton btnReport;
+        private IconButton btnLogout;
     }
 }

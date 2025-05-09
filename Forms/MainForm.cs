@@ -17,6 +17,7 @@ namespace InvestApp.Forms
             currentUser = user;
             this.MouseDown += Form_MouseDown;
             LoadUserInfo();
+            this.Load += (s, e) => ShowUserProfile();
         }
 
         private void LoadUserInfo()
@@ -59,7 +60,7 @@ namespace InvestApp.Forms
         {
             if (!panelAssetsSubmenu.Visible)
             {
-                // Calculate position below Assets button
+                // Calculate position below Assets button, accounting for top panel
                 Point buttonPoint = btnAssets.PointToScreen(Point.Empty);
                 Point formPoint = this.PointToClient(buttonPoint);
 
@@ -76,6 +77,22 @@ namespace InvestApp.Forms
         private void btnExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to logout?", "Logout",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                Application.Restart();
+            }
+        }
+
+        private void ShowUserProfile()
+        {
+            // This is a placeholder for when you implement the profile form
+            // You'll replace this with actual profile form showing logic
+            panelProfile.BringToFront();
         }
 
         private void DisableButton()
