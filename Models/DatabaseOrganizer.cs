@@ -30,6 +30,14 @@ namespace Invest_Application
     {
         public static void SaveUser(User user)
         {
+            if (!IsUserExists(user.Username))
+            {
+                Directory.CreateDirectory(AppPaths.GetUserAssetsFolder(user.Username));
+                Directory.CreateDirectory(AppPaths.GetUserGoldFolder(user.Username));
+                Directory.CreateDirectory(AppPaths.GetUserCryptoFolder(user.Username));
+                Directory.CreateDirectory(AppPaths.GetUserRealEstateFolder(user.Username));
+                Directory.CreateDirectory(AppPaths.GetUserStockFolder(user.Username));
+            }
             var jsonString = JsonSerializer.Serialize(user);
             File.WriteAllText(AppPaths.GetUserFile(user.Username), jsonString);
         }
@@ -56,7 +64,8 @@ namespace Invest_Application
 
         public static User GetUser(string username)
         {
-            if (!IsUserExists(username)) {
+            if (!IsUserExists(username))
+            {
                 throw new FileNotFoundException("User data file not found");
             }
 
@@ -86,7 +95,7 @@ namespace Invest_Application
                 }
             }
         }
-        
+
         public static void SaveUserGold(Gold gold, string username)
         {
             SaveUserAsset(gold, AppPaths.GetUserGoldFolder(username));

@@ -23,12 +23,12 @@ namespace Invest_Application
 
         public static string GetUserFile(string userName)
         {
-            return Path.Combine(usersFolder, "userName") + ".json";
+            return Path.Combine(usersFolder, userName) + ".json";
         }
 
         public static string GetUserAssetsFolder(string userName)
         {
-            return Path.Combine(assetsFolder, "userName");
+            return Path.Combine(assetsFolder, userName);
         }
 
         public static string GetUserGoldFolder(string userName)
@@ -48,6 +48,11 @@ namespace Invest_Application
         public static string GetUserRealEstateFolder(string userName)
         {
             return Path.Combine(GetUserAssetsFolder(userName), "RealEstate");
+        }
+
+        public static string GetAssetFolder()
+        {
+            return assetsFolder;
         }
 
         public static string GetGoldAPIFile()
@@ -93,19 +98,19 @@ namespace Invest_Application
             if (!Directory.Exists(APIequivalentFolder))
                 Directory.CreateDirectory(APIequivalentFolder);
 
-            CreateEmptyFileIfNotExists(goldAPIFile);
-            CreateEmptyFileIfNotExists(realEstateAPIFile);
-            CreateEmptyFileIfNotExists(stockAPIFile);
-            CreateEmptyFileIfNotExists(cryptoAPIFile);
+            CreateEmptyFileIfNotExists(goldAPIFile, "4800");
+            CreateEmptyFileIfNotExists(realEstateAPIFile, "1.15");
+            CreateEmptyFileIfNotExists(stockAPIFile, "50000");
+            CreateEmptyFileIfNotExists(cryptoAPIFile, "1000000");
 
-            CreateEmptyFileIfNotExists(loginStateFile);
+            CreateEmptyFileIfNotExists(loginStateFile, "");
         }
 
-        private static void CreateEmptyFileIfNotExists(string filePath)
+        private static void CreateEmptyFileIfNotExists(string filePath, string content)
         {
             if (!File.Exists(filePath))
             {
-                File.WriteAllText(filePath, string.Empty);
+                File.WriteAllText(filePath, content);
             }
         }
     }
