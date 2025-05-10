@@ -103,6 +103,8 @@ namespace InvestApp.Forms
             btnAdd.FlatAppearance.BorderSize = 0;
             btnAdd.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             panelDesktop.Controls.Add(btnAdd);
+            btnAdd.Click += btnAdd_Click;  // Add this line
+
             UpdateAddButtonPosition();
         }
 
@@ -269,6 +271,82 @@ namespace InvestApp.Forms
             }
         }
 
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            string assetType = btnAdd.Tag?.ToString() ?? "";
+            using (var form = new AssetForm(assetType, currentUser.Username))
+            {
+                form.ShowDialog();
+                if (form.DialogResult == DialogResult.OK)
+                {
+                    // Keep track of the current button
+                    IconButton currentAssetBtn = currentBtn;
+
+                    // Refresh the asset list without resetting button state
+                    RefreshAssetList(assetType);
+
+                    // Reactivate the button with the same styling
+                    if (currentAssetBtn != null)
+                    {
+                        ActivateButton(currentAssetBtn, Color.FromArgb(95, 77, 221));
+                    }
+                }
+            }
+        }
+        private void RefreshAssetList(string assetType)
+        {
+            // Clear desktop panel
+            panelDesktop.Controls.Clear();
+
+            // Create scrollable panel
+            Panel scrollPanel = new Panel
+            {
+                AutoScroll = true,
+                Dock = DockStyle.Fill,
+                Padding = new Padding(20)
+            };
+
+            // Get assets based on type
+            List<Asset> assets = new List<Asset>();
+            switch (assetType)
+            {
+                case "Gold":
+                    assets = DatabaseOrganizer.GetAllUserGold(currentUser.Username).ToList<Asset>();
+                    break;
+                case "Crypto":
+                    assets = DatabaseOrganizer.GetAllUserCrypto(currentUser.Username).ToList<Asset>();
+                    break;
+                case "RealEstate":
+                    assets = DatabaseOrganizer.GetAllUserRealEstate(currentUser.Username).ToList<Asset>();
+                    break;
+                case "Stock":
+                    assets = DatabaseOrganizer.GetAllUserStock(currentUser.Username).ToList<Asset>();
+                    break;
+            }
+
+            // Add asset panels
+            int yOffset = 0;
+            foreach (var asset in assets)
+            {
+                Panel assetPanel = CreateAssetInfoPanel(asset);
+                assetPanel.Location = new Point(0, yOffset);
+                scrollPanel.Controls.Add(assetPanel);
+                yOffset += assetPanel.Height + 10;
+            }
+
+            // Add the scroll panel to desktop
+            panelDesktop.Controls.Add(scrollPanel);
+
+            // Ensure ADD button stays visible
+            if (btnAdd != null)
+            {
+                btnAdd.Tag = assetType;
+                btnAdd.Visible = true;
+                panelDesktop.Controls.Add(btnAdd);
+                UpdateAddButtonPosition();
+                btnAdd.BringToFront();
+            }
+        }
         private void btnAssets_Click(object sender, EventArgs e)
         {
             if (!panelAssetsSubmenu.Visible)
