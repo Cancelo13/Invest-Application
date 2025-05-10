@@ -325,5 +325,10 @@ namespace Invest_Application
             List<Stock> lst = GetAllUserStock(username);
             return lst.Count;
         }
+
+        public static int GetUserAssetCount(string username)
+        {
+            return GetUserStockCount(username) + GetUserRealEstateCount(username) + GetUserCryptoCount(username) + GetUserGoldCount(username);
+        }
     }
 }

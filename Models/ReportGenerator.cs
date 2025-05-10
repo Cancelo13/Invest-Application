@@ -253,12 +253,50 @@ namespace Invest_Application
         }
         public static void GeneratePdfReport(string username)
         {
-            PdfDocument document = new PdfDocument();
-            PdfPage page = document.AddPage();
-            XGraphics gfx = XGraphics.FromPdfPage(page);
-            XFont font = new XFont("Arial", 12);
-            gfx.DrawString("Hello World", font, XBrushes.Black, new XPoint(100, 100));
-            document.Save(AppPaths.GetPdfSaveFile(username));
+            // string excelPath = AppPaths.GetExcelSaveFile(username);
+            // string pdfPath = AppPaths.GetPdfSaveFile(username);
+
+            // // Load the Excel file
+            // using var workbook = new XLWorkbook(excelPath);
+            // var worksheet = workbook.Worksheet(1); // First worksheet
+
+            // var document = new PdfDocument();
+            // var page = document.AddPage();
+            // var gfx = XGraphics.FromPdfPage(page);
+            // var font = new XFont("Arial", 12, XFontStyle.Regular);
+
+            // double x = 50, y = 50;
+            // double rowHeight = 20;
+            // int pageHeightLimit = 800;
+
+            // foreach (var row in worksheet.RowsUsed())
+            // {
+            //     string line = "";
+            //     foreach (var cell in row.CellsUsed())
+            //     {
+            //         line += cell.GetValue<string>() + "    ";
+            //     }
+
+            //     gfx.DrawString(line, font, XBrushes.Black, new XPoint(x, y));
+            //     y += rowHeight;
+
+            //     // Start new page if needed
+            //     if (y > pageHeightLimit)
+            //     {
+            //         page = document.AddPage();
+            //         gfx = XGraphics.FromPdfPage(page);
+            //         y = 50;
+            //     }
+            // }
+
+            // document.Save(pdfPath);
+            // PdfDocument document = new PdfDocument();
+            // PdfPage page = document.AddPage();
+            // XGraphics gfx = XGraphics.FromPdfPage(page);
+            // XFont font = new XFont("Arial", 12);
+
+            // gfx.DrawString("Hello World", font, XBrushes.Black, new XPoint(100, 100));
+            // document.Save(AppPaths.GetPdfSaveFile(username));
         }
         public static void InitializeGeneration()
         {
