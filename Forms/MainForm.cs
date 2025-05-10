@@ -666,17 +666,216 @@ namespace InvestApp.Forms
 
         private void ShowUserProfile()
         {
-            // Clear desktop panel
+            // Clear desktop panel and hide ADD button
             panelDesktop.Controls.Clear();
+            if (btnAdd != null) btnAdd.Visible = false;
 
-            // Hide ADD button if it exists
-            if (btnAdd != null)
+            // Create main profile panel
+            Panel profilePanel = new Panel
             {
-                btnAdd.Visible = false;
+                Width = 1000,
+                Height = 700,
+                BackColor = Color.FromArgb(245, 246, 250),
+                Padding = new Padding(40)
+            };
+
+            // Create header panel with user info
+            Panel headerPanel = new Panel
+            {
+                Width = 920,
+                Height = 150,
+                BackColor = Color.White,
+                Location = new Point(40, 40)
+            };
+
+            // Profile icon
+            IconPictureBox profileIcon = new IconPictureBox
+            {
+                IconChar = IconChar.UserCircle,
+                IconSize = 100,
+                Size = new Size(100, 100),
+                Location = new Point(30, 25),
+                IconColor = Color.FromArgb(95, 77, 221),
+                BackColor = Color.Transparent
+            };
+
+            // User info labels
+            Label lblProfileName = new Label
+            {
+                Text = currentUser.Name,
+                Font = new Font("Segoe UI", 28, FontStyle.Bold),
+                ForeColor = Color.FromArgb(95, 77, 221),
+                Location = new Point(150, 30),
+                AutoSize = true
+            };
+
+            Label lblProfileUsername = new Label
+            {
+                Text = $"@{currentUser.Username}",
+                Font = new Font("Segoe UI", 16),
+                ForeColor = Color.Gray,
+                Location = new Point(150, 80),
+                AutoSize = true
+            };
+
+            // Add controls to header panel
+            headerPanel.Controls.AddRange(new Control[] { profileIcon, lblProfileName, lblProfileUsername });
+
+            // Create assets overview panel
+            Panel assetsPanel = new Panel
+            {
+                Location = new Point(40, 210),
+                Width = 920,
+                Height = 450,
+                BackColor = Color.White
+            };
+
+            // Add assets title
+            Label lblAssetsTitle = new Label
+            {
+                Text = "Assets Overview",
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                ForeColor = Color.FromArgb(95, 77, 221),
+                Location = new Point(30, 30),
+                AutoSize = true
+            };
+            assetsPanel.Controls.Add(lblAssetsTitle);
+
+            // Add asset cards
+            var assetTypes = new[]{
+                (type: "Gold", icon: IconChar.Crown, color: Color.FromArgb(255, 215, 0)),
+                (type: "Crypto", icon: IconChar.Bitcoin, color: Color.FromArgb(247, 147, 26)),
+                (type: "Stock", icon: IconChar.ChartLine, color: Color.FromArgb(0, 150, 136)),
+                (type: "Real Estate", icon: IconChar.Home, color: Color.FromArgb(156, 39, 176))
+            };
+
+            int cardWidth = 420;
+            int cardHeight = 180;
+            int padding = 30;
+            int startY = 90;
+
+            // Create and add asset cards
+            for (int i = 0; i < assetTypes.Length; i++)
+            {
+                var (type, icon, color) = assetTypes[i];
+                int row = i / 2;
+                int col = i % 2;
+                int x = padding + (cardWidth + padding) * col;
+                int y = startY + (cardHeight + padding) * row;
+
+                Panel card = CreateAssetCard(
+                    type,
+                    icon,
+                    color,
+                    GetAssetCount(type),
+                    GetAssetROI(type),
+                    new Point(x, y),
+                    new Size(cardWidth, cardHeight)
+                );
+
+                assetsPanel.Controls.Add(card);
             }
 
-            // This is a placeholder for when you implement the profile form
-            panelProfile.BringToFront();
+            // Add panels to main profile panel
+            profilePanel.Controls.AddRange(new Control[] { headerPanel, assetsPanel });
+
+            // Center the profile panel
+            profilePanel.Location = new Point(
+                (panelDesktop.Width - profilePanel.Width) / 2,
+                (panelDesktop.Height - profilePanel.Height) / 2
+            );
+
+            // Add to desktop panel
+            panelDesktop.Controls.Add(profilePanel);
+        }
+
+
+        private Panel CreateAssetCard(string assetType, IconChar icon, Color color, int count, decimal roi, Point location, Size size)
+        {
+            Panel card = new Panel
+            {
+                Location = location,
+                Size = size,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.None
+            };
+
+            // Asset icon
+            IconPictureBox assetIcon = new IconPictureBox
+            {
+                IconChar = icon,
+                IconSize = 32,
+                Size = new Size(32, 32),
+                Location = new Point(20, 20),
+                IconColor = color,
+                BackColor = Color.Transparent
+            };
+
+            // Asset type label
+            Label lblType = new Label
+            {
+                Text = $"{assetType} Assets",
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                ForeColor = Color.FromArgb(64, 64, 64),
+                Location = new Point(70, 20),
+                AutoSize = true
+            };
+
+            // Count label
+            Label lblCount = new Label
+            {
+                Text = $"{count} asset{(count != 1 ? "s" : "")}",
+                Font = new Font("Segoe UI", 12),
+                ForeColor = Color.Gray,
+                Location = new Point(70, 50),
+                AutoSize = true
+            };
+
+            // ROI label
+            Label lblROI = new Label
+            {
+                Text = $"ROI: {roi:P2}",
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                ForeColor = roi >= 0 ? Color.FromArgb(39, 174, 96) : Color.FromArgb(231, 76, 60),
+                Location = new Point(20, 90),
+                AutoSize = true
+            };
+
+            // Add border and shadow effect
+            card.Paint += (s, e) =>
+            {
+                using (var pen = new Pen(Color.FromArgb(230, 230, 230)))
+                {
+                    e.Graphics.DrawRectangle(pen, 0, 0, card.Width - 1, card.Height - 1);
+                }
+            };
+
+            card.Controls.AddRange(new Control[] { assetIcon, lblType, lblCount, lblROI });
+            return card;
+        }
+
+        private int GetAssetCount(string assetType)
+        {
+            return assetType switch
+            {
+                "Gold" => DatabaseOrganizer.GetUserGoldCount(currentUser.Username),
+                "Crypto" => DatabaseOrganizer.GetUserCryptoCount(currentUser.Username),
+                "Stock" => DatabaseOrganizer.GetUserStockCount(currentUser.Username),
+                "Real Estate" => DatabaseOrganizer.GetUserRealEstateCount(currentUser.Username),
+                _ => 0
+            };
+        }
+
+        private decimal GetAssetROI(string assetType)
+        {
+            return assetType switch
+            {
+                "Gold" => InvestmentAnalyzer.GetGoldROI(currentUser.Username),
+                "Crypto" => InvestmentAnalyzer.GetCryptoROI(currentUser.Username),
+                "Stock" => InvestmentAnalyzer.GetStockROI(currentUser.Username),
+                "Real Estate" => InvestmentAnalyzer.GetRealEstateROI(currentUser.Username),
+                _ => 0
+            };
         }
 
         private void DisableButton()
