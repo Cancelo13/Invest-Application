@@ -168,7 +168,6 @@ namespace Invest_Application
 
         public static void OverwriteUserAsset(string username, Asset asset)
         {
-            DeleteUserAsset(username, asset);
             string filePath = "";
             if (HasGoldId(username, asset.Id))
             {
@@ -190,6 +189,7 @@ namespace Invest_Application
             {
                 return;
             }
+            DeleteUserAsset(username, asset);
             SaveUserAsset(asset, filePath);
         }
 
