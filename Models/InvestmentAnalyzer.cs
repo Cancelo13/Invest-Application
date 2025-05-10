@@ -30,6 +30,10 @@ namespace Invest_Application
         {
             decimal gain = GetGoldCurrentValue(username);
             decimal spent = GetGoldPurchaseValue(username);
+            if (spent == 0)
+            {
+                return 0;
+            }
             return (gain - spent) / spent;
         }
 
@@ -59,6 +63,10 @@ namespace Invest_Application
         {
             decimal gain = GetRealEstateCurrentValue(username);
             decimal spent = GetRealEstatePurchaseValue(username);
+            if (spent == 0)
+            {
+                return 0;
+            }
             return (gain - spent) / spent;
         }
 
@@ -89,6 +97,10 @@ namespace Invest_Application
         {
             decimal gain = GetStockCurrentValue(username);
             decimal spent = GetStockPurchaseValue(username);
+            if (spent == 0)
+            {
+                return 0;
+            }
             return (gain - spent) / spent;
         }
 
@@ -118,6 +130,10 @@ namespace Invest_Application
         {
             decimal gain = GetCryptoCurrentValue(username);
             decimal spent = GetCryptoPurchaseValue(username);
+            if (spent == 0)
+            {
+                return 0;
+            }
             return (gain - spent) / spent;
         }
 

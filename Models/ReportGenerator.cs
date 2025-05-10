@@ -126,7 +126,7 @@ namespace Invest_Application
             {
                 DateTime creationDate = File.GetCreationTime(AppPaths.GetExcelSaveFile(username));
                 TimeSpan difference = DateTime.Now - creationDate;
-                if (difference <= TimeSpan.FromMinutes(5))
+                if (difference <= TimeSpan.FromSeconds(1))
                 {
                     return;
                 }
