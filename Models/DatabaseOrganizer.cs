@@ -124,7 +124,7 @@ namespace Invest_Application
             }
             else
             {
-                throw new InvalidCastException("Expected type of Gold, RealEstate, Stock, Crypto but received something else.");
+                return;
             }
             if (File.Exists(filePath))
             {
@@ -188,9 +188,9 @@ namespace Invest_Application
             }
             else
             {
-                throw new InvalidCastException("Expected type of Gold, RealEstate, Stock, Crypto but received something else.");
+                return;
             }
-            SaveUserAsset(asset, username);
+            SaveUserAsset(asset, filePath);
         }
 
         private static decimal ExtractDecimalFromFile(string filePath)
