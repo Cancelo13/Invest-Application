@@ -29,9 +29,13 @@ namespace InvestApp.Forms
             this.btnExit = new IconButton();
 
             // === Form Settings ===
-            this.WindowState = FormWindowState.Maximized;
+            this.WindowState = FormWindowState.Normal;  // Start in normal state
             this.FormBorderStyle = FormBorderStyle.None;
             this.BackColor = Color.FromArgb(30, 30, 45);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.MinimumSize = new Size(1280, 720);    // Minimum size
+            this.Size = new Size(1600, 900);
+            this.Padding = new Padding(2);  // Add padding for resize area
 
             // === Top Panel ===
             this.panelTop.Dock = DockStyle.Top;
@@ -131,12 +135,16 @@ namespace InvestApp.Forms
             this.btnZakat.Click += new System.EventHandler(this.btnZakat_Click);
 
             // === ROI Panel ===
-            this.panelROI.Size = new Size(280, 70);  // Increased width from 220 to 280
-            this.panelROI.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            this.panelROI.BackColor = Color.FromArgb(95, 77, 221);
-            this.panelROI.Location = new Point(this.Width - 520, 10);
+            this.panelROI = new Panel
+            {
+                Size = new Size(280, 70),
+                BackColor = Color.FromArgb(95, 77, 221),
+                Location = new Point(350, 5),  // Changed location to be after profile panel
+                Anchor = AnchorStyles.Top | AnchorStyles.Left
+            };
 
             // ROI Icon
+            this.iconROI = new IconPictureBox();
             this.iconROI.IconChar = IconChar.ChartLine;
             this.iconROI.IconSize = 32;
             this.iconROI.Size = new Size(32, 32);
@@ -145,6 +153,7 @@ namespace InvestApp.Forms
             this.iconROI.BackColor = Color.Transparent;
 
             // ROI Title
+            this.lblROITitle = new Label();
             this.lblROITitle.Text = "ROI";
             this.lblROITitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             this.lblROITitle.ForeColor = Color.White;
@@ -152,12 +161,12 @@ namespace InvestApp.Forms
             this.lblROITitle.Size = new Size(60, 25);
 
             // ROI Value
-            this.lblROI.Text = "+12.5%";
-            this.lblROI.Font = new Font("Segoe UI", 14F, FontStyle.Bold);  // Increased font size
+            this.lblROI = new Label();
+            this.lblROI.Text = "+0.00%";
+            this.lblROI.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             this.lblROI.ForeColor = Color.White;
             this.lblROI.Location = new Point(60, 35);
-            this.lblROI.Size = new Size(200, 25);  // Increased width
-            this.lblROI.AutoSize = false;          // Fixed size
+            this.lblROI.Size = new Size(200, 25);
             this.lblROI.TextAlign = ContentAlignment.MiddleLeft;
 
             // === Exit Button ===
@@ -165,12 +174,28 @@ namespace InvestApp.Forms
             this.btnExit.IconColor = Color.White;
             this.btnExit.FlatStyle = FlatStyle.Flat;
             this.btnExit.FlatAppearance.BorderSize = 0;
-            this.btnExit.Size = new Size(32, 32);
             this.btnExit.BackColor = Color.Transparent;
-            this.btnExit.Location = new Point(this.panelTop.Width - 42, 8);  // Changed from this.Width
+            this.btnExit.Size = new Size(45, 45);      // Match maximize button size
+            this.btnExit.Location = new Point(this.panelTop.Width - 50, 2);
             this.btnExit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             this.btnExit.Cursor = Cursors.Hand;
             this.btnExit.Click += btnExit_Click;
+
+            // === Maximize/Restore Button ===
+            this.FormBorderStyle = FormBorderStyle.None;  // Required for custom window chrome
+            this.MaximizeBox = true;
+
+            this.btnMaximize = new IconButton();
+            this.btnMaximize.IconChar = IconChar.Square;
+            this.btnMaximize.IconColor = Color.White;
+            this.btnMaximize.FlatStyle = FlatStyle.Flat;
+            this.btnMaximize.FlatAppearance.BorderSize = 0;
+            this.btnMaximize.Size = new Size(45, 45);  // Increased size
+            this.btnMaximize.BackColor = Color.Transparent;
+            this.btnMaximize.Location = new Point(this.panelTop.Width - 97, 2);  // Adjusted position
+            this.btnMaximize.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            this.btnMaximize.Cursor = Cursors.Hand;
+            this.btnMaximize.Click += btnMaximize_Click;
 
             // === Logout Button ===
             this.btnLogout = new IconButton();
@@ -197,14 +222,21 @@ namespace InvestApp.Forms
             // === Add Controls in Correct Order ===
             this.panelProfile.Controls.AddRange(new Control[] { iconProfile, lblUserName });
             this.panelAssetsSubmenu.Controls.AddRange(new Control[] { btnCrypto, btnGold, btnRealEstate, btnStock });
-            this.panelROI.Controls.AddRange(new Control[] { iconROI, lblROITitle, lblROI });
 
+            this.panelROI.Controls.Clear();  // Clear any existing controls
+            this.panelROI.Controls.AddRange(new Control[] {
+                this.iconROI,
+                this.lblROITitle,
+                this.lblROI
+            });
             this.panelTop.Controls.Clear();
             this.panelTop.Controls.AddRange(new Control[] {
-                panelProfile,  // Profile panel on left
-                panelROI,      // ROI panel in middle-right
-                btnExit        // Exit button on far right
+                panelProfile,  // Profile panel first (left side)
+                panelROI,     // ROI panel second
+                btnMaximize,  // Maximize button third
+                btnExit      // Exit button last
             });
+            this.panelROI.BringToFront();
 
             this.panelMenu.Controls.AddRange(new Control[] {
                 btnAssets,
@@ -259,5 +291,7 @@ namespace InvestApp.Forms
         private IconButton btnZakat;
         private IconButton btnReport;
         private IconButton btnLogout;
+        private IconButton btnMaximize;
+
     }
 }

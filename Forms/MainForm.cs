@@ -11,6 +11,19 @@ namespace InvestApp.Forms
         private Form currentChildForm;
         private User currentUser;
         private IconButton btnAdd;
+        private const int WM_NCHITTEST = 0x84;
+        private const int HTCLIENT = 0x1;
+        private const int HTCAPTION = 0x2;
+        private const int HTLEFT = 0x0A;
+        private const int HTRIGHT = 0x0B;
+        private const int HTTOP = 0x0C;
+        private const int HTTOPLEFT = 0x0D;
+        private const int HTTOPRIGHT = 0x0E;
+        private const int HTBOTTOM = 0x0F;
+        private const int HTBOTTOMLEFT = 0x10;
+        private const int HTBOTTOMRIGHT = 0x11;
+        private bool isDragging = false;
+        private const int RESIZE_AREA = 10;
 
         public MainForm(User user)
         {
@@ -21,14 +34,45 @@ namespace InvestApp.Forms
                 Visible = false
             };
             panelMenu.Controls.Add(leftBorderBtn);
+            this.panelROI.BringToFront();
 
             // ...existing code...
             currentUser = user;
             this.MouseDown += Form_MouseDown;
+            this.panelTop.MouseDown += Form_MouseDown;
+            this.MouseUp += Form_MouseUp;
+            this.panelTop.MouseUp += Form_MouseUp;
             LoadUserInfo();
             InitializeAddButton();
             this.Load += (s, e) => ShowUserProfile();
             this.Resize += (s, e) => UpdateAddButtonPosition();
+        }
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+
+            if (m.Msg == WM_NCHITTEST && WindowState == FormWindowState.Normal)
+            {
+                Point pos = new Point(m.LParam.ToInt32());
+                pos = this.PointToClient(pos);
+
+                if (pos.X <= RESIZE_AREA && pos.Y <= RESIZE_AREA)
+                    m.Result = (IntPtr)HTTOPLEFT;
+                else if (pos.X >= ClientSize.Width - RESIZE_AREA && pos.Y <= RESIZE_AREA)
+                    m.Result = (IntPtr)HTTOPRIGHT;
+                else if (pos.X <= RESIZE_AREA && pos.Y >= ClientSize.Height - RESIZE_AREA)
+                    m.Result = (IntPtr)HTBOTTOMLEFT;
+                else if (pos.X >= ClientSize.Width - RESIZE_AREA && pos.Y >= ClientSize.Height - RESIZE_AREA)
+                    m.Result = (IntPtr)HTBOTTOMRIGHT;
+                else if (pos.X <= RESIZE_AREA)
+                    m.Result = (IntPtr)HTLEFT;
+                else if (pos.X >= ClientSize.Width - RESIZE_AREA)
+                    m.Result = (IntPtr)HTRIGHT;
+                else if (pos.Y <= RESIZE_AREA)
+                    m.Result = (IntPtr)HTTOP;
+                else if (pos.Y >= ClientSize.Height - RESIZE_AREA)
+                    m.Result = (IntPtr)HTBOTTOM;
+            }
         }
 
         private void panelProfile_Click(object sender, EventArgs e)
@@ -443,11 +487,8 @@ namespace InvestApp.Forms
         {
             // Clear desktop panel
             panelDesktop.Controls.Clear();
-            // Hide ADD button if it exists
-            if (btnAdd != null)
-            {
-                btnAdd.Visible = false;
-            }
+            if (btnAdd != null) btnAdd.Visible = false;
+
             if (DatabaseOrganizer.GetUserAssetCount(currentUser.Username) == 0)
             {
                 // Create "No Assets" label
@@ -460,46 +501,63 @@ namespace InvestApp.Forms
                     TextAlign = ContentAlignment.MiddleCenter
                 };
 
-                // Center the label in the panel
                 lblNoAssets.Location = new Point(
                     (panelDesktop.Width - lblNoAssets.PreferredWidth) / 2,
                     (panelDesktop.Height - lblNoAssets.PreferredHeight) / 2
                 );
 
-                // Add label to desktop panel
                 panelDesktop.Controls.Add(lblNoAssets);
-
-                // Activate button styling
                 ActivateButton(sender, Color.FromArgb(95, 77, 221));
                 return;
             }
+
+            // Generate reports
             ReportGenerator.InitializeGeneration();
             ReportGenerator.GenerateExcelReport(currentUser.Username);
             ReportGenerator.GenerateTextReport(currentUser.Username);
             ReportGenerator.GeneratePdfReport(currentUser.Username);
 
-            // Create container panel for buttons
-            Panel reportButtonsPanel = new Panel
+            // Create main container panel
+            Panel mainContainer = new Panel
             {
-                Width = 400,
-                Height = 150,
+                Width = panelDesktop.Width - 60,
+                Height = panelDesktop.Height - 60,
+                Location = new Point(30, 30),
+                BackColor = Color.White
+            };
+
+            // Create buttons panel at the top
+            Panel buttonsPanel = new Panel
+            {
+                Width = mainContainer.Width,
+                Height = 80,
+                Dock = DockStyle.Top,
                 BackColor = Color.Transparent
+            };
+
+            // Create report content panel
+            Panel reportPanel = new Panel
+            {
+                Width = mainContainer.Width,
+                Height = mainContainer.Height - buttonsPanel.Height - 20,
+                Location = new Point(0, buttonsPanel.Height + 10),
+                BackColor = Color.White,
+                AutoScroll = true
             };
 
             // Create Excel button
             IconButton btnExcel = new IconButton
             {
-                Text = "EXCEL Report",
+                Text = "Save as Excel",
                 IconChar = IconChar.FileExcel,
                 FlatStyle = FlatStyle.Flat,
-                Size = new Size(180, 60),
+                Size = new Size(180, 50),
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(25, 128, 71),
                 IconColor = Color.FromArgb(25, 128, 71),
                 TextImageRelation = TextImageRelation.ImageBeforeText,
                 BackColor = Color.White,
-                Cursor = Cursors.Hand,
-                Location = new Point(0, 0)
+                Cursor = Cursors.Hand
             };
             btnExcel.FlatAppearance.BorderSize = 2;
             btnExcel.FlatAppearance.BorderColor = Color.FromArgb(25, 128, 71);
@@ -508,12 +566,12 @@ namespace InvestApp.Forms
                 try
                 {
                     ReportGenerator.SaveExcelReport(currentUser.Username, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-                    MessageBox.Show("Excel report generated successfully!", "Success",
+                    MessageBox.Show("Excel report saved successfully!", "Success",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error generating Excel report: {ex.Message}", "Error",
+                    MessageBox.Show($"Error saving Excel report: {ex.Message}", "Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             };
@@ -521,17 +579,16 @@ namespace InvestApp.Forms
             // Create PDF button
             IconButton btnPDF = new IconButton
             {
-                Text = "PDF Report",
+                Text = "Save as PDF",
                 IconChar = IconChar.FilePdf,
                 FlatStyle = FlatStyle.Flat,
-                Size = new Size(180, 60),
+                Size = new Size(180, 50),
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(200, 33, 39),
                 IconColor = Color.FromArgb(200, 33, 39),
                 TextImageRelation = TextImageRelation.ImageBeforeText,
                 BackColor = Color.White,
-                Cursor = Cursors.Hand,
-                Location = new Point(220, 0)
+                Cursor = Cursors.Hand
             };
             btnPDF.FlatAppearance.BorderSize = 2;
             btnPDF.FlatAppearance.BorderColor = Color.FromArgb(200, 33, 39);
@@ -550,17 +607,97 @@ namespace InvestApp.Forms
                 }
             };
 
-            // Add buttons to container panel
-            reportButtonsPanel.Controls.AddRange(new Control[] { btnExcel, btnPDF });
+            IconButton btnGenerate = new IconButton
+            {
+                Text = "Generate New",
+                IconChar = IconChar.Sync,
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(180, 50),
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(95, 77, 221),
+                IconColor = Color.FromArgb(95, 77, 221),
+                TextImageRelation = TextImageRelation.ImageBeforeText,
+                BackColor = Color.White,
+                Cursor = Cursors.Hand
+            };
+            btnGenerate.FlatAppearance.BorderSize = 2;
+            btnGenerate.FlatAppearance.BorderColor = Color.FromArgb(95, 77, 221);
 
-            // Center the container panel
-            reportButtonsPanel.Location = new Point(
-                (panelDesktop.Width - reportButtonsPanel.Width) / 2,
-                (panelDesktop.Height - reportButtonsPanel.Height) / 2
-            );
+            int buttonSpacing = 10;
+            int totalWidth = btnExcel.Width * 3 + buttonSpacing * 2;
+            int startX = (buttonsPanel.Width - totalWidth) / 2;
+            // Position buttons
+            btnExcel.Location = new Point(startX, 15);
+            btnPDF.Location = new Point(startX + btnExcel.Width + buttonSpacing, 15);
+            btnGenerate.Location = new Point(startX + (btnExcel.Width + buttonSpacing) * 2, 15);
 
-            // Add container panel to desktop
-            panelDesktop.Controls.Add(reportButtonsPanel);
+
+            // Create report text display
+            RichTextBox reportText = new RichTextBox
+            {
+                Width = reportPanel.Width - 40,
+                Height = reportPanel.Height - 40,
+                Location = new Point(20, 20),
+                Font = new Font("Consolas", 12),
+                BackColor = Color.White,
+                ReadOnly = true,
+                BorderStyle = BorderStyle.None
+            };
+
+            // Load and display report content
+            try
+            {
+                string reportContent = File.ReadAllText(AppPaths.GetTextSaveFile());
+                reportText.Text = reportContent;
+            }
+            catch (Exception ex)
+            {
+                reportText.Text = $"Error loading report: {ex.Message}";
+            }
+
+            btnGenerate.Click += (s, ev) =>
+            {
+                try
+                {
+                    // Clear the current report text first
+                    if (reportPanel.Controls.Count > 0 && reportPanel.Controls[0] is RichTextBox existingReportText)
+                    {
+                        existingReportText.Clear();
+                    }
+
+                    // Generate new reports
+                    //ReportGenerator.InitializeGeneration();
+                    ReportGenerator.GenerateExcelReport(currentUser.Username);
+                    ReportGenerator.GenerateTextReport(currentUser.Username);
+                    ReportGenerator.GeneratePdfReport(currentUser.Username);
+
+                    // Add a small delay to ensure file is written completely
+                    System.Threading.Thread.Sleep(100);
+
+                    MessageBox.Show("Report generated successfully!", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Refresh report display by reading the new content AFTER showing the message
+                    string reportContent = File.ReadAllText(AppPaths.GetTextSaveFile());
+                    if (reportPanel.Controls.Count > 0 && reportPanel.Controls[0] is RichTextBox rtb)
+                    {
+                        rtb.Text = reportContent;
+                        rtb.Refresh();
+                        Application.DoEvents(); // Ensure UI updates immediately
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error generating report: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            };
+
+            // Add controls to panels
+            buttonsPanel.Controls.AddRange(new Control[] { btnExcel, btnPDF, btnGenerate });
+            reportPanel.Controls.Add(reportText);
+            mainContainer.Controls.AddRange(new Control[] { buttonsPanel, reportPanel });
+            panelDesktop.Controls.Add(mainContainer);
 
             // Activate button styling
             ActivateButton(sender, Color.FromArgb(95, 77, 221));
@@ -662,6 +799,21 @@ namespace InvestApp.Forms
                 Application.Restart();
             }
         }
+
+        private void btnMaximize_Click(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Normal)
+            {
+                WindowState = FormWindowState.Maximized;
+                btnMaximize.IconChar = IconChar.WindowRestore;
+            }
+            else
+            {
+                WindowState = FormWindowState.Normal;
+                btnMaximize.IconChar = IconChar.Square;
+            }
+        }
+
 
         private void ShowUserProfile()
         {
@@ -900,9 +1052,17 @@ namespace InvestApp.Forms
         {
             if (e.Button == MouseButtons.Left)
             {
-                ReleaseCapture();
-                SendMessage(this.Handle, 0x112, 0xf012, 0);
+                if (e.Clicks == 1 && sender is Panel && ((Panel)sender).Name == "panelTop")
+                {
+                    isDragging = true;
+                    ReleaseCapture();
+                    SendMessage(this.Handle, 0x112, 0xf012, 0);
+                }
             }
+        }
+        private void Form_MouseUp(object sender, MouseEventArgs e)
+        {
+            isDragging = false;
         }
     }
 }
