@@ -127,6 +127,7 @@ namespace InvestApp.Forms
             this.btnZakat.Dock = DockStyle.Bottom;
             this.btnZakat.TextAlign = ContentAlignment.MiddleLeft;
             this.btnZakat.Padding = new Padding(20, 0, 0, 0);
+            this.btnZakat.Click += new System.EventHandler(this.btnZakat_Click);
 
             // === ROI Panel ===
             this.panelROI.Size = new Size(280, 70);  // Increased width from 220 to 280

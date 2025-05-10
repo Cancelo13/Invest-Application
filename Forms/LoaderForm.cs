@@ -119,7 +119,7 @@ namespace InvestApp.Forms
             }
             else
             {
-                dummyData(user.Username);
+                //dummyData(user.Username);
                 this.Hide();
                 new MainForm(user).Show();
             }

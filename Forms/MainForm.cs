@@ -150,7 +150,7 @@ namespace InvestApp.Forms
             {
                 Text = $"Current Value: ${currentValue:N2}",
                 Font = new Font("Segoe UI", 10),
-                Location = new Point(460, 40),
+                Location = new Point(500, 40),
                 AutoSize = true
             };
 
@@ -213,6 +213,43 @@ namespace InvestApp.Forms
             return assetPanel;
         }
 
+        private void btnZakat_Click(object sender, EventArgs e)
+        {
+            // Clear desktop panel
+            panelDesktop.Controls.Clear();
+
+            // Hide ADD button if it exists
+            if (btnAdd != null)
+            {
+                btnAdd.Visible = false;
+            }
+
+            // Calculate Zakat
+            var calculator = new ZakatCalculator();
+            decimal zakatAmount = calculator.CalculateZakat(currentUser.Username);
+
+            // Create Zakat display label
+            Label lblZakat = new Label
+            {
+                Text = $"Your Zakat is:\n${zakatAmount:N2}",
+                Font = new Font("Segoe UI", 24, FontStyle.Bold),
+                ForeColor = Color.FromArgb(95, 77, 221),
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            // Center the label in the panel
+            lblZakat.Location = new Point(
+                (panelDesktop.Width - lblZakat.PreferredWidth) / 2,
+                (panelDesktop.Height - lblZakat.PreferredHeight) / 2
+            );
+
+            // Add label to desktop panel
+            panelDesktop.Controls.Add(lblZakat);
+
+            // Activate button styling
+            ActivateButton(sender, Color.FromArgb(95, 77, 221));
+        }
         private void UpdateAddButtonPosition()
         {
             if (btnAdd != null)
