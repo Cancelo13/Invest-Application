@@ -475,9 +475,8 @@ namespace InvestApp.Forms
             }
             ReportGenerator.InitializeGeneration();
             ReportGenerator.GenerateExcelReport(currentUser.Username);
-            ReportGenerator.GeneratePdfReport(currentUser.Username);
             ReportGenerator.GenerateTextReport(currentUser.Username);
-
+            ReportGenerator.GeneratePdfReport(currentUser.Username);
 
             // Create container panel for buttons
             Panel reportButtonsPanel = new Panel

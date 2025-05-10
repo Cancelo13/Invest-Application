@@ -6,6 +6,10 @@ namespace Invest_Application
 {
     public static class ReportGenerator
     {
+        private static readonly string smallSeparator = "-----------------------------\n";
+        private static readonly string titleLine = "--------------------------------------\n";
+        private static readonly string largeSeparator = "-----------------------------------------------------------------------\n";
+
         private static void FillHeader(IXLWorksheet worksheet, int lCol, ref int row, string headerTitle, int headerTitleRow, int dateRow)
         {
             worksheet.Range(headerTitleRow, lCol, headerTitleRow, lCol + 6).Merge();
@@ -126,7 +130,7 @@ namespace Invest_Application
             {
                 DateTime creationDate = File.GetCreationTime(AppPaths.GetExcelSaveFile(username));
                 TimeSpan difference = DateTime.Now - creationDate;
-                if (difference <= TimeSpan.FromSeconds(1))
+                if (difference <= TimeSpan.FromSeconds(5))
                 {
                     return;
                 }
@@ -251,70 +255,219 @@ namespace Invest_Application
                 workbook.SaveAs(AppPaths.GetExcelSaveFile(username));
             }
         }
+
+        static void WriteLinesToPdf(string[] lines, string outputPdfPath)
+        {
+            XFont font = new XFont("Arial", 12, XFontStyle.Regular); ;
+            double marginLeft = 40;
+            double marginTop = 40;
+            double marginBottom = 40;
+            // Create document
+            var document = new PdfDocument();
+            document.Info.Title = "Paged Text";
+
+            // Start first page
+            var page = document.AddPage();
+            var gfx = XGraphics.FromPdfPage(page);
+            var brush = XBrushes.Black;
+
+            // Calculate line height once
+            double lineHeight = font.GetHeight() + 2;
+
+            // Y cursor
+            double y = marginTop;
+
+            foreach (var line in lines)
+            {
+                // If next line would overflow bottom margin, start a new page
+                if (line + "\n" == largeSeparator || y + lineHeight > page.Height - marginBottom)
+                {
+                    page = document.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    y = marginTop;
+                }
+
+                // Draw the text
+                gfx.DrawString(line, font, brush, marginLeft, y);
+
+                // Advance cursor
+                y += lineHeight;
+            }
+
+            // Save file
+            document.Save(outputPdfPath);
+        }
+
         public static void GeneratePdfReport(string username)
         {
-            // string excelPath = AppPaths.GetExcelSaveFile(username);
-            // string pdfPath = AppPaths.GetPdfSaveFile(username);
-
-            // // Load the Excel file
-            // using var workbook = new XLWorkbook(excelPath);
-            // var worksheet = workbook.Worksheet(1); // First worksheet
-
-            // var document = new PdfDocument();
-            // var page = document.AddPage();
-            // var gfx = XGraphics.FromPdfPage(page);
-            // var font = new XFont("Arial", 12, XFontStyle.Regular);
-
-            // double x = 50, y = 50;
-            // double rowHeight = 20;
-            // int pageHeightLimit = 800;
-
-            // foreach (var row in worksheet.RowsUsed())
-            // {
-            //     string line = "";
-            //     foreach (var cell in row.CellsUsed())
-            //     {
-            //         line += cell.GetValue<string>() + "    ";
-            //     }
-
-            //     gfx.DrawString(line, font, XBrushes.Black, new XPoint(x, y));
-            //     y += rowHeight;
-
-            //     // Start new page if needed
-            //     if (y > pageHeightLimit)
-            //     {
-            //         page = document.AddPage();
-            //         gfx = XGraphics.FromPdfPage(page);
-            //         y = 50;
-            //     }
-            // }
-
-            // document.Save(pdfPath);
-            // PdfDocument document = new PdfDocument();
-            // PdfPage page = document.AddPage();
-            // XGraphics gfx = XGraphics.FromPdfPage(page);
-            // XFont font = new XFont("Arial", 12);
-
-            // gfx.DrawString("Hello World", font, XBrushes.Black, new XPoint(100, 100));
-            // document.Save(AppPaths.GetPdfSaveFile(username));
+            if (File.Exists(AppPaths.GetPdfSaveFile(username)))
+            {
+                DateTime creationDate = File.GetCreationTime(AppPaths.GetPdfSaveFile(username));
+                TimeSpan difference = DateTime.Now - creationDate;
+                if (difference <= TimeSpan.FromSeconds(5))
+                {
+                    return;
+                }
+                File.Delete(AppPaths.GetPdfSaveFile(username));
+            }
+            GenerateTextReport(username);
+            var textLines = File.ReadAllLines(AppPaths.GetTextSaveFile());
+            WriteLinesToPdf(textLines, AppPaths.GetPdfSaveFile(username));
         }
         public static void InitializeGeneration()
         {
             File.WriteAllText(AppPaths.GetTextSaveFile(), "Generating....");
         }
+
+        private static void LoadGeneral(ref string content, IXLWorksheet worksheet)
+        {
+            bool startInserting = false;
+            bool added = false;
+            foreach (var row in worksheet.RowsUsed())
+            {
+                if (startInserting)
+                {
+                    List<string> line = new List<string>();
+                    foreach (var cell in row.CellsUsed())
+                    {
+                        line.Add(cell.GetValue<string>());
+                    }
+                    if (added)
+                    {
+                        content += smallSeparator;
+                    }
+                    content += "Type: " + line[0] + "\n";
+                    content += "Count: " + line[1] + "\n";
+                    content += "Total Purchase Price: " + line[2] + "\n";
+                    content += "Current Value: " + line[3] + "\n";
+                    content += "ROI: " + line[4] + "\n";
+                    added = true;
+                }
+                else
+                {
+                    foreach (var cell in row.CellsUsed())
+                    {
+                        if (cell.GetValue<string>() == "Type")
+                        {
+                            startInserting = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void LoadAssets(ref string content, IXLWorksheet worksheet)
+        {
+            bool startInserting = false;
+            bool added = false;
+            foreach (var row in worksheet.RowsUsed())
+            {
+                if (startInserting)
+                {
+                    List<string> line = new List<string>();
+                    foreach (var cell in row.CellsUsed())
+                    {
+                        line.Add(cell.GetValue<string>());
+                    }
+                    if (added)
+                    {
+                        content += smallSeparator;
+                    }
+                    content += "Type: " + line[0] + "\n";
+                    content += "Quantity: " + line[1] + "\n";
+                    content += "Purchase Date: " + line[2] + "\n";
+                    content += "Purchase Price: " + line[3] + "\n";
+                    content += "Total Purchase Price: " + line[4] + "\n";
+                    content += "Current Value: " + line[5] + "\n";
+                    content += "ROI: " + line[6] + "\n";
+                    added = true;
+                }
+                else
+                {
+                    foreach (var cell in row.CellsUsed())
+                    {
+                        if (cell.GetValue<string>() == "Name")
+                        {
+                            startInserting = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
         public static void GenerateTextReport(string username)
         {
-            File.WriteAllText(AppPaths.GetTextSaveFile(), "This is the content");
+            if (File.Exists(AppPaths.GetTextSaveFile()))
+            {
+                DateTime creationDate = File.GetCreationTime(AppPaths.GetTextSaveFile());
+                TimeSpan difference = DateTime.Now - creationDate;
+                if (difference <= TimeSpan.FromSeconds(5))
+                {
+                    return;
+                }
+                File.Delete(AppPaths.GetTextSaveFile());
+            }
+            string content = "";
+
+            content += "Username: " + username + "\n";
+            content += "Date: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\n";
+            content += titleLine;
+
+            using var workbook = new XLWorkbook(AppPaths.GetExcelSaveFile(username));
+
+            content += "General Analysis:\n";
+            content += titleLine;
+            LoadGeneral(ref content, workbook.Worksheet(1));
+
+            content += largeSeparator;
+            content += "# All Assets:\n";
+            content += titleLine;
+            LoadAssets(ref content, workbook.Worksheet(2));
+
+            content += largeSeparator;
+            content += "Gold Investment:\n";
+            content += titleLine;
+            LoadAssets(ref content, workbook.Worksheet(3));
+
+            content += largeSeparator;
+            content += "Stock Investment:\n";
+            content += titleLine;
+            LoadAssets(ref content, workbook.Worksheet(4));
+
+            content += largeSeparator;
+            content += "Crypto Investment:\n";
+            content += titleLine;
+            LoadAssets(ref content, workbook.Worksheet(5));
+
+            content += largeSeparator;
+            content += "Real Estate Investment:\n";
+            content += titleLine;
+            LoadAssets(ref content, workbook.Worksheet(6));
+
+            File.WriteAllText(AppPaths.GetTextSaveFile(), content);
         }
         public static void SaveExcelReport(string username, string destinationPath)
         {
             GenerateExcelReport(username);
-            File.Copy(AppPaths.GetExcelSaveFile(username), Path.Combine(destinationPath, Path.GetFileName(AppPaths.GetExcelSaveFile(username))));
+            destinationPath = Path.Combine(destinationPath, Path.GetFileName(AppPaths.GetExcelSaveFile(username)));
+            if (File.Exists(destinationPath))
+            {
+                File.Delete(destinationPath);
+            }
+            File.Copy(AppPaths.GetExcelSaveFile(username), destinationPath);
         }
         public static void SavePdfReport(string username, string destinationPath)
         {
             GeneratePdfReport(username);
-            File.Copy(AppPaths.GetPdfSaveFile(username), Path.Combine(destinationPath, Path.GetFileName(AppPaths.GetPdfSaveFile(username))));
+            destinationPath = Path.Combine(destinationPath, Path.GetFileName(AppPaths.GetPdfSaveFile(username)));
+            if (File.Exists(destinationPath))
+            {
+                File.Delete(destinationPath);
+            }
+            File.Copy(AppPaths.GetPdfSaveFile(username), destinationPath);
         }
     }
 }
