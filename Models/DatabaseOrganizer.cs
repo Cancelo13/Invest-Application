@@ -171,19 +171,19 @@ namespace Invest_Application
             string filePath = "";
             if (HasGoldId(username, asset.Id))
             {
-                filePath = Path.Combine(AppPaths.GetUserGoldFolder(username), asset.Id + ".json");
+                filePath = AppPaths.GetUserGoldFolder(username);
             }
             else if (HasRealEstateId(username, asset.Id))
             {
-                filePath = Path.Combine(AppPaths.GetUserRealEstateFolder(username), asset.Id + ".json");
+                filePath = AppPaths.GetUserRealEstateFolder(username);
             }
             else if (HasStockId(username, asset.Id))
             {
-                filePath = Path.Combine(AppPaths.GetUserStockFolder(username), asset.Id + ".json");
+                filePath = AppPaths.GetUserStockFolder(username);
             }
             else if (HasCryptoId(username, asset.Id))
             {
-                filePath = Path.Combine(AppPaths.GetUserCryptoFolder(username), asset.Id + ".json");
+                filePath = AppPaths.GetUserCryptoFolder(username);
             }
             else
             {
