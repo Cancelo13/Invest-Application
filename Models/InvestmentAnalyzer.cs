@@ -141,6 +141,11 @@ namespace Invest_Application
         {
             decimal gain = GetTotalCurrentValue(username);
             decimal spent = GetTotalPurchaseValue(username);
+            if (spent == 0)
+            {
+                Console.WriteLine("Spent = 0");
+                return 0;
+            }
             return (gain - spent) / spent;
         }
     }

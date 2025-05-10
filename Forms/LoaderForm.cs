@@ -71,7 +71,7 @@ namespace InvestApp.Forms
             return new Crypto(
                 name: GetRandomCryptoName(),
                 quantity: _random.Next(1, 3),
-                purchasePrice: _random.Next(20000, 40000),
+                purchasePrice: _random.Next(20_000, 40_000),
                 purchaseDate: RandomDate()
             );
         }
@@ -81,12 +81,12 @@ namespace InvestApp.Forms
             return new RealEstate(
                 name: GetRandomRealEstateName(),
                 quantity: 1,
-                purchasePrice: _random.Next(100000, 400000),
+                purchasePrice: _random.Next(100_000, 400_000),
                 purchaseDate: RandomDate()
             );
         }
 
-        public void dummyDate(string username)
+        public void dummyData(string username)
         {
             for (int i = _random.Next(1, 5); i >= 1; i--)
             {
@@ -119,6 +119,7 @@ namespace InvestApp.Forms
             }
             else
             {
+                dummyData(user.Username);
                 this.Hide();
                 new MainForm(user).Show();
             }

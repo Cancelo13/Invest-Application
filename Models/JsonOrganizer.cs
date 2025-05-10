@@ -33,46 +33,90 @@ namespace Invest_Application
             return null;
         }
 
-        public static T? GetAssetFromDB<T>(string filePath) where T : Asset
+        public static Gold? GetGoldFromDB(string filePath)
         {
-            if (!File.Exists(filePath)) return null;
-
-            string json = File.ReadAllText(filePath).Trim();
-            if (string.IsNullOrWhiteSpace(json)) return null;
-
-            try
-            {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-
-                // Deserialize to a temporary object to get the basic properties
-                using JsonDocument document = JsonDocument.Parse(json);
-                var root = document.RootElement;
-
-                // Extract the properties
-                string name = root.GetProperty("Name").GetString() ?? "";
-                int quantity = root.GetProperty("Quantity").GetInt32();
-                decimal purchasePrice = root.GetProperty("PurchasePrice").GetDecimal();
-                DateTime purchaseDate = root.GetProperty("PurchaseDate").GetDateTime();
-
-                // Create the concrete type based on T
-                if (typeof(T) == typeof(Gold))
-                    return (T)(Asset)new Gold(name, quantity, purchasePrice, purchaseDate);
-                else if (typeof(T) == typeof(Stock))
-                    return (T)(Asset)new Stock(name, quantity, purchasePrice, purchaseDate);
-                else if (typeof(T) == typeof(Crypto))
-                    return (T)(Asset)new Crypto(name, quantity, purchasePrice, purchaseDate);
-                else if (typeof(T) == typeof(RealEstate))
-                    return (T)(Asset)new RealEstate(name, quantity, purchasePrice, purchaseDate);
-                else
-                    throw new ArgumentException($"Unsupported asset type: {typeof(T).Name}");
-            }
-            catch (Exception)
+            if (!File.Exists(filePath))
             {
                 return null;
             }
+            string json = File.ReadAllText(filePath).Trim();
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                try
+                {
+                    return JsonSerializer.Deserialize<Gold>(json);
+                }
+                catch (JsonException)
+                {
+
+                }
+            }
+            return null;
         }
+
+        public static Crypto? GetCryptoFromDB(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
+            string json = File.ReadAllText(filePath).Trim();
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                try
+                {
+                    return JsonSerializer.Deserialize<Crypto>(json);
+                }
+                catch (JsonException)
+                {
+
+                }
+            }
+            return null;
+        }
+
+        public static RealEstate? GetRealEstateFromDB(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
+            string json = File.ReadAllText(filePath).Trim();
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                try
+                {
+                    return JsonSerializer.Deserialize<RealEstate>(json);
+                }
+                catch (JsonException)
+                {
+
+                }
+            }
+            return null;
+        }
+
+        public static Stock? GetStockFromDB(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
+            string json = File.ReadAllText(filePath).Trim();
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                try
+                {
+                    return JsonSerializer.Deserialize<Stock>(json);
+                }
+                catch (JsonException)
+                {
+
+                }
+            }
+            return null;
+        }
+
+
     }
 }
