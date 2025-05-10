@@ -347,6 +347,93 @@ namespace InvestApp.Forms
                 btnAdd.BringToFront();
             }
         }
+
+        private void btnReport_Click(object sender, EventArgs e)
+        {
+            // Clear desktop panel
+            panelDesktop.Controls.Clear();
+
+            // Hide ADD button if it exists
+            if (btnAdd != null)
+            {
+                btnAdd.Visible = false;
+            }
+
+            // Create container panel for buttons
+            Panel reportButtonsPanel = new Panel
+            {
+                Width = 400,
+                Height = 150,
+                BackColor = Color.Transparent
+            };
+
+            // Create Excel button
+            IconButton btnExcel = new IconButton
+            {
+                Text = "EXCEL Report",
+                IconChar = IconChar.FileExcel,
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(180, 60),
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(25, 128, 71),
+                IconColor = Color.FromArgb(25, 128, 71),
+                TextImageRelation = TextImageRelation.ImageBeforeText,
+                BackColor = Color.White,
+                Cursor = Cursors.Hand,
+                Location = new Point(0, 0)
+            };
+            btnExcel.FlatAppearance.BorderSize = 2;
+            btnExcel.FlatAppearance.BorderColor = Color.FromArgb(25, 128, 71);
+            btnExcel.Click += (s, ev) =>
+            {
+                try
+                {
+                    ReportGenerator.SaveExcelReport(currentUser.Username);
+                    MessageBox.Show("Excel report generated successfully!", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error generating Excel report: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            };
+
+            // Create PDF button
+            IconButton btnPDF = new IconButton
+            {
+                Text = "PDF Report",
+                IconChar = IconChar.FilePdf,
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(180, 60),
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(200, 33, 39),
+                IconColor = Color.FromArgb(200, 33, 39),
+                TextImageRelation = TextImageRelation.ImageBeforeText,
+                BackColor = Color.White,
+                Cursor = Cursors.Hand,
+                Location = new Point(220, 0)
+            };
+            btnPDF.FlatAppearance.BorderSize = 2;
+            btnPDF.FlatAppearance.BorderColor = Color.FromArgb(200, 33, 39);
+            btnPDF.Click += (s, ev) => { /* PDF functionality will be added later */ };
+
+            // Add buttons to container panel
+            reportButtonsPanel.Controls.AddRange(new Control[] { btnExcel, btnPDF });
+
+            // Center the container panel
+            reportButtonsPanel.Location = new Point(
+                (panelDesktop.Width - reportButtonsPanel.Width) / 2,
+                (panelDesktop.Height - reportButtonsPanel.Height) / 2
+            );
+
+            // Add container panel to desktop
+            panelDesktop.Controls.Add(reportButtonsPanel);
+
+            // Activate button styling
+            ActivateButton(sender, Color.FromArgb(95, 77, 221));
+        }
+
         private void btnAssets_Click(object sender, EventArgs e)
         {
             if (!panelAssetsSubmenu.Visible)

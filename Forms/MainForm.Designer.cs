@@ -113,6 +113,7 @@ namespace InvestApp.Forms
             this.btnReport.Dock = DockStyle.Bottom;
             this.btnReport.TextAlign = ContentAlignment.MiddleLeft;
             this.btnReport.Padding = new Padding(20, 0, 0, 0);
+            this.btnReport.Click += new System.EventHandler(this.btnReport_Click);
 
             // === Zakat Button ===
             this.btnZakat.Text = "Zakat";
