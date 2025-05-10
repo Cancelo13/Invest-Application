@@ -166,28 +166,31 @@ namespace Invest_Application
             SaveUserAsset(crypto, AppPaths.GetUserCryptoFolder(username));
         }
 
-        public static void OverwriteUserGold(Gold gold, string username)
+        public static void OverwriteUserAsset(string username, Asset asset)
         {
-            DeleteUserAsset(username, gold);
-            SaveUserGold(gold, username);
-        }
-
-        public static void OverwriteUserRealEstate(RealEstate realEstate, string username)
-        {
-            DeleteUserAsset(username, realEstate);
-            SaveUserRealEstate(realEstate, username);
-        }
-
-        public static void OverwriteUserStock(Stock stock, string username)
-        {
-            DeleteUserAsset(username, stock);
-            SaveUserStock(stock, username);
-        }
-
-        public static void OverwriteUserCrypto(Crypto crypto, string username)
-        {
-            DeleteUserAsset(username, crypto);
-            SaveUserCrypto(crypto, username);
+            DeleteUserAsset(username, asset);
+            string filePath = "";
+            if (HasGoldId(username, asset.Id))
+            {
+                filePath = Path.Combine(AppPaths.GetUserGoldFolder(username), asset.Id + ".json");
+            }
+            else if (HasRealEstateId(username, asset.Id))
+            {
+                filePath = Path.Combine(AppPaths.GetUserRealEstateFolder(username), asset.Id + ".json");
+            }
+            else if (HasStockId(username, asset.Id))
+            {
+                filePath = Path.Combine(AppPaths.GetUserStockFolder(username), asset.Id + ".json");
+            }
+            else if (HasCryptoId(username, asset.Id))
+            {
+                filePath = Path.Combine(AppPaths.GetUserCryptoFolder(username), asset.Id + ".json");
+            }
+            else
+            {
+                throw new InvalidCastException("Expected type of Gold, RealEstate, Stock, Crypto but received something else.");
+            }
+            SaveUserAsset(asset, username);
         }
 
         private static decimal ExtractDecimalFromFile(string filePath)
