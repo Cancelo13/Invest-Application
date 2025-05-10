@@ -9,20 +9,21 @@ namespace Invest_Application
         public int Quantity { get; }
         public decimal PurchasePrice { get; }
         public DateTime PurchaseDate { get; }
-        public string Id { get; }
+        public string Id { get; set; }
 
         [JsonConstructor]
         protected Asset(
             string name,
             int quantity,
             decimal purchasePrice,
-            DateTime purchaseDate)
+            DateTime purchaseDate,
+            string? id = null)
         {
             Name = name;
             Quantity = quantity;
             PurchasePrice = purchasePrice;
             PurchaseDate = purchaseDate;
-            Id = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            Id = id ?? DateTime.Now.ToString("yyyyMMddHHmmssfff");
         }
 
         public abstract decimal CurrentPrice();

@@ -195,7 +195,82 @@ namespace InvestApp.Forms
                 Anchor = AnchorStyles.Right
             };
             btnDelete.FlatAppearance.BorderSize = 0;
-            btnDelete.Click += (s, e) => { /* Delete functionality will be added later */ };
+            btnDelete.Click += (s, e) =>
+            {
+                if (MessageBox.Show("Are you sure you want to delete this asset?", "Delete Asset",
+        MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    try
+                    {
+                        // Get current asset type for refresh
+                        string assetType = btnAdd.Tag?.ToString() ?? "";
+
+                        // Delete the asset using DatabaseOrganizer
+                        DatabaseOrganizer.DeleteUserAsset(currentUser.Username, asset);
+
+                        // Clear and refresh only the desktop panel
+                        panelDesktop.Controls.Clear();
+
+                        // Create scrollable panel
+                        Panel scrollPanel = new Panel
+                        {
+                            AutoScroll = true,
+                            Dock = DockStyle.Fill,
+                            Padding = new Padding(20)
+                        };
+
+                        // Get updated assets list
+                        List<Asset> assets = new List<Asset>();
+                        switch (assetType)
+                        {
+                            case "Gold":
+                                assets = DatabaseOrganizer.GetAllUserGold(currentUser.Username).ToList<Asset>();
+                                break;
+                            case "Crypto":
+                                assets = DatabaseOrganizer.GetAllUserCrypto(currentUser.Username).ToList<Asset>();
+                                break;
+                            case "RealEstate":
+                                assets = DatabaseOrganizer.GetAllUserRealEstate(currentUser.Username).ToList<Asset>();
+                                break;
+                            case "Stock":
+                                assets = DatabaseOrganizer.GetAllUserStock(currentUser.Username).ToList<Asset>();
+                                break;
+                        }
+
+                        // Rebuild asset panels
+                        int yOffset = 0;
+                        foreach (var updatedAsset in assets)
+                        {
+                            Panel assetPanel = CreateAssetInfoPanel(updatedAsset);
+                            assetPanel.Location = new Point(0, yOffset);
+                            scrollPanel.Controls.Add(assetPanel);
+                            yOffset += assetPanel.Height + 10;
+                        }
+
+                        // Add the scroll panel to desktop
+                        panelDesktop.Controls.Add(scrollPanel);
+
+                        // Keep ADD button visible and on top
+                        if (btnAdd != null)
+                        {
+                            btnAdd.Tag = assetType;
+                            btnAdd.Visible = true;
+                            panelDesktop.Controls.Add(btnAdd);
+                            UpdateAddButtonPosition();
+                            btnAdd.BringToFront();
+                        }
+
+                        // Update total ROI display
+                        decimal totalROI = InvestmentAnalyzer.GetTotalROI(currentUser.Username);
+                        UpdateROIDisplay(totalROI);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error deleting asset: {ex.Message}", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            };
 
 
             // Horizontal Line
