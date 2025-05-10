@@ -315,11 +315,6 @@ namespace Invest_Application
             var textLines = File.ReadAllLines(AppPaths.GetTextSaveFile());
             WriteLinesToPdf(textLines, AppPaths.GetPdfSaveFile(username));
         }
-        public static void InitializeGeneration()
-        {
-            File.WriteAllText(AppPaths.GetTextSaveFile(), "Generating....");
-        }
-
         private static void LoadGeneral(ref string content, IXLWorksheet worksheet)
         {
             bool startInserting = false;

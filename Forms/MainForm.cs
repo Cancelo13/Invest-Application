@@ -512,7 +512,6 @@ namespace InvestApp.Forms
             }
 
             // Generate reports
-            ReportGenerator.InitializeGeneration();
             ReportGenerator.GenerateExcelReport(currentUser.Username);
             ReportGenerator.GenerateTextReport(currentUser.Username);
             ReportGenerator.GeneratePdfReport(currentUser.Username);
@@ -561,19 +560,21 @@ namespace InvestApp.Forms
             };
             btnExcel.FlatAppearance.BorderSize = 2;
             btnExcel.FlatAppearance.BorderColor = Color.FromArgb(25, 128, 71);
-            btnExcel.Click += (s, ev) =>
+            btnExcel.Click += (s, e) =>
             {
-                try
-                {
-                    ReportGenerator.SaveExcelReport(currentUser.Username, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-                    MessageBox.Show("Excel report saved successfully!", "Success",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error saving Excel report: {ex.Message}", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                using (var fbd = new FolderBrowserDialog())
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                        try
+                        {
+                            ReportGenerator.SaveExcelReport(currentUser.Username, fbd.SelectedPath);
+                            MessageBox.Show("Excel report saved successfully!", "Success",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error saving Excel report: {ex.Message}", "Error",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
             };
 
             // Create PDF button
@@ -592,19 +593,21 @@ namespace InvestApp.Forms
             };
             btnPDF.FlatAppearance.BorderSize = 2;
             btnPDF.FlatAppearance.BorderColor = Color.FromArgb(200, 33, 39);
-            btnPDF.Click += (s, ev) =>
+            btnPDF.Click += (s, e) =>
             {
-                try
-                {
-                    ReportGenerator.SavePdfReport(currentUser.Username, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-                    MessageBox.Show("PDF report saved successfully!", "Success",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error saving PDF report: {ex.Message}", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                using (var fbd = new FolderBrowserDialog())
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                        try
+                        {
+                            ReportGenerator.SavePdfReport(currentUser.Username, fbd.SelectedPath);
+                            MessageBox.Show("PDF report saved successfully!", "Success",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error saving PDF report: {ex.Message}", "Error",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
             };
 
             IconButton btnGenerate = new IconButton
