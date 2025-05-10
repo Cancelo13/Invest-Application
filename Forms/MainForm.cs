@@ -180,7 +180,23 @@ namespace InvestApp.Forms
                 Anchor = AnchorStyles.Right
             };
             btnEdit.FlatAppearance.BorderSize = 0;
-            btnEdit.Click += (s, e) => { /* Edit functionality will be added later */ };
+            btnEdit.Click += (s, e) =>
+            {
+                string assetType = btnAdd.Tag?.ToString() ?? "";
+                using (var form = new AssetForm(assetType, currentUser.Username, asset))
+                {
+                    form.ShowDialog();
+                    if (form.DialogResult == DialogResult.OK)
+                    {
+                        // Refresh the list without changing button state
+                        RefreshAssetList(assetType);
+
+                        // Update total ROI display
+                        decimal totalROI = InvestmentAnalyzer.GetTotalROI(currentUser.Username);
+                        UpdateROIDisplay(totalROI);
+                    }
+                }
+            };
 
             // Delete Button
             IconButton btnDelete = new IconButton

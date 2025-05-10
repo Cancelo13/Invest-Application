@@ -8,19 +8,43 @@ namespace InvestApp.Forms
     {
         private readonly string assetType;
         private readonly string username;
+        private readonly Asset? assetToEdit;
+        private bool isEditMode;
 
         public AssetForm(string assetType, string username)
         {
             InitializeComponent();
             this.assetType = assetType;
             this.username = username;
+            this.assetToEdit = null;
+            this.isEditMode = false;
             this.Load += AssetForm_Load;
         }
 
+        public AssetForm(string assetType, string username, Asset asset)
+        {
+            InitializeComponent();
+            this.assetType = assetType;
+            this.username = username;
+            this.assetToEdit = asset;
+            this.isEditMode = true;
+            this.Load += AssetForm_Load;
+        }
+
+
         private void AssetForm_Load(object sender, EventArgs e)
         {
-            lblTitle.Text = $"Add New {assetType}";
+            lblTitle.Text = isEditMode ? $"Edit {assetType}" : $"Add New {assetType}";
             dtpPurchaseDate.MaxDate = DateTime.Today;
+
+            if (isEditMode && assetToEdit != null)
+            {
+                // Pre-fill form with existing asset data
+                txtName.Text = assetToEdit.Name;
+                txtQuantity.Text = assetToEdit.Quantity.ToString();
+                txtPrice.Text = assetToEdit.PurchasePrice.ToString();
+                dtpPurchaseDate.Value = assetToEdit.PurchaseDate;
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -29,17 +53,28 @@ namespace InvestApp.Forms
             {
                 try
                 {
-                    Asset newAsset = CreateAsset();
-                    SaveAsset(newAsset);
-                    MessageBox.Show("Asset added successfully!", "Success",
+                    Asset asset = CreateAsset();
+
+                    if (isEditMode && assetToEdit != null)
+                    {
+                        // Preserve the original ID when editing
+                        asset.Id = assetToEdit.Id;
+                        DatabaseOrganizer.OverwriteUserAsset(username, asset);
+                    }
+                    else
+                    {
+                        SaveAsset(asset);
+                    }
+
+                    MessageBox.Show($"Asset {(isEditMode ? "updated" : "added")} successfully!", "Success",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error adding asset: {ex.Message}", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Error {(isEditMode ? "updating" : "adding")} asset: {ex.Message}",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
