@@ -1,6 +1,7 @@
 using ClosedXML.Excel;
 using PdfSharpCore.Pdf;
 using PdfSharpCore.Drawing;
+using DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace Invest_Application
 {
@@ -418,35 +419,50 @@ namespace Invest_Application
 
             using var workbook = new XLWorkbook(AppPaths.GetExcelSaveFile(username));
 
-            content += "General Analysis:\n";
+            content += " # General Analysis:\n";
             content += titleLine;
             LoadGeneral(ref content, workbook.Worksheet(1));
 
             content += largeSeparator;
-            content += "# All Assets:\n";
+            content += " #  All Assets:\n";
             content += titleLine;
             LoadAssets(ref content, workbook.Worksheet(2));
+            int cur = 3;
+            if (DatabaseOrganizer.GetUserGoldCount(username) > 0)
+            {
+                content += largeSeparator;
+                content += " # Gold Investment:\n";
+                content += titleLine;
+                LoadAssets(ref content, workbook.Worksheet(cur));
+                cur++;
+            }
 
-            content += largeSeparator;
-            content += "Gold Investment:\n";
-            content += titleLine;
-            LoadAssets(ref content, workbook.Worksheet(3));
+            if (DatabaseOrganizer.GetUserStockCount(username) > 0)
+            {
+                content += largeSeparator;
+                content += " # Stock Investment:\n";
+                content += titleLine;
+                LoadAssets(ref content, workbook.Worksheet(cur));
+                cur++;
+            }
 
-            content += largeSeparator;
-            content += "Stock Investment:\n";
-            content += titleLine;
-            LoadAssets(ref content, workbook.Worksheet(4));
+            if (DatabaseOrganizer.GetUserCryptoCount(username) > 0)
+            {
+                content += largeSeparator;
+                content += " # Crypto Investment:\n";
+                content += titleLine;
+                LoadAssets(ref content, workbook.Worksheet(cur));
+                cur++;
+            }
 
-            content += largeSeparator;
-            content += "Crypto Investment:\n";
-            content += titleLine;
-            LoadAssets(ref content, workbook.Worksheet(5));
-
-            content += largeSeparator;
-            content += "Real Estate Investment:\n";
-            content += titleLine;
-            LoadAssets(ref content, workbook.Worksheet(6));
-
+            if (DatabaseOrganizer.GetUserRealEstateCount(username) > 0)
+            {
+                content += largeSeparator;
+                content += " # Real Estate Investment:\n";
+                content += titleLine;
+                LoadAssets(ref content, workbook.Worksheet(cur));
+                cur++;
+            }
             File.WriteAllText(AppPaths.GetTextSaveFile(), content);
         }
         public static void SaveExcelReport(string username, string destinationPath)
