@@ -352,7 +352,10 @@ namespace InvestApp.Forms
         {
             // Clear desktop panel
             panelDesktop.Controls.Clear();
-
+            ReportGenerator.InitializeGeneration();
+            ReportGenerator.GenerateExcelReport(currentUser.Username);
+            ReportGenerator.GeneratePdfReport(currentUser.Username);
+            ReportGenerator.GenerateTextReport(currentUser.Username);
             // Hide ADD button if it exists
             if (btnAdd != null)
             {
@@ -388,7 +391,7 @@ namespace InvestApp.Forms
             {
                 try
                 {
-                    ReportGenerator.SaveExcelReport(currentUser.Username);
+                    ReportGenerator.SaveExcelReport(currentUser.Username, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                     MessageBox.Show("Excel report generated successfully!", "Success",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -416,7 +419,20 @@ namespace InvestApp.Forms
             };
             btnPDF.FlatAppearance.BorderSize = 2;
             btnPDF.FlatAppearance.BorderColor = Color.FromArgb(200, 33, 39);
-            btnPDF.Click += (s, ev) => { /* PDF functionality will be added later */ };
+            btnPDF.Click += (s, ev) =>
+            {
+                try
+                {
+                    ReportGenerator.SavePdfReport(currentUser.Username, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+                    MessageBox.Show("PDF report saved successfully!", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error saving PDF report: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            };
 
             // Add buttons to container panel
             reportButtonsPanel.Controls.AddRange(new Control[] { btnExcel, btnPDF });

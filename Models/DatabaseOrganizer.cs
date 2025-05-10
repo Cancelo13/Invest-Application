@@ -312,5 +312,29 @@ namespace Invest_Application
             }
             return theList;
         }
+
+        public static int GetUserGoldCount(string username)
+        {
+            List<Gold> lst = GetAllUserGold(username);
+            return lst.Count;
+        }
+
+        public static int GetUserCryptoCount(string username)
+        {
+            List<Crypto> lst = GetAllUserCrypto(username);
+            return lst.Count;
+        }
+
+        public static int GetUserRealEstateCount(string username)
+        {
+            List<RealEstate> lst = GetAllUserRealEstate(username);
+            return lst.Count;
+        }
+
+        public static int GetUserStockCount(string username)
+        {
+            List<Stock> lst = GetAllUserStock(username);
+            return lst.Count;
+        }
     }
 }

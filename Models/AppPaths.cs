@@ -20,7 +20,20 @@ namespace Invest_Application
         public static readonly string cookiesFolder = Path.Combine(dataPath, "cookies");
         public static readonly string loginStateFile = Path.Combine(cookiesFolder, "loginStatus.json");
 
+        public static string GetExcelSaveFile(string username)
+        {
+            return Path.Combine(cookiesFolder, username + " Investment Report.xlsx");
+        }
 
+        public static string GetPdfSaveFile(string username)
+        {
+            return Path.Combine(cookiesFolder, username + " Investment Report.pdf");
+        }
+
+        public static string GetTextSaveFile()
+        {
+            return Path.Combine(cookiesFolder, "temporary.txt");
+        }
 
         public static string GetUserFile(string userName)
         {
