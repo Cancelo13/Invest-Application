@@ -82,19 +82,19 @@ namespace Invest_Application
             string filePath = "";
             if (asset is Gold)
             {
-                filePath = Path.Combine(AppPaths.GetUserGoldFolder(username), asset.id + ".json");
+                filePath = Path.Combine(AppPaths.GetUserGoldFolder(username), asset.Id + ".json");
             }
             else if (asset is RealEstate)
             {
-                filePath = Path.Combine(AppPaths.GetUserRealEstateFolder(username), asset.id + ".json");
+                filePath = Path.Combine(AppPaths.GetUserRealEstateFolder(username), asset.Id + ".json");
             }
             else if (asset is Stock)
             {
-                filePath = Path.Combine(AppPaths.GetUserStockFolder(username), asset.id + ".json");
+                filePath = Path.Combine(AppPaths.GetUserStockFolder(username), asset.Id + ".json");
             }
             else if (asset is Crypto)
             {
-                filePath = Path.Combine(AppPaths.GetUserCryptoFolder(username), asset.id + ".json");
+                filePath = Path.Combine(AppPaths.GetUserCryptoFolder(username), asset.Id + ".json");
             }
             else
             {
@@ -112,7 +112,7 @@ namespace Invest_Application
             {
                 throw new DirectoryNotFoundException("User asset not exist");
             }
-            string currPath = Path.Combine(folder, asset.id + ".json");
+            string currPath = Path.Combine(folder, asset.Id + ".json");
             if (!File.Exists(currPath))
             {
                 var jsonString = JsonSerializer.Serialize(asset);
@@ -237,50 +237,80 @@ namespace Invest_Application
             return ExtractDecimalFromFile(AppPaths.GetCryptoAPIFile());
         }
 
-        private static List<T> GetAllUserAsset<T>(string folderPath) where T : Asset
+        public static List<Gold> GetAllUserGold(string username)
         {
-            List<T> assets = new List<T>();
+            List<Gold> theList = new List<Gold>();
+            string folderPath = AppPaths.GetUserGoldFolder(username);
             if (Directory.Exists(folderPath))
             {
                 string[] files = Directory.GetFiles(folderPath);
                 foreach (string file in files)
                 {
-                    T? asset = JsonOrganizer.GetAssetFromDB<T>(file);
-                    if (asset != null)
+                    Gold? tmpAsset = JsonOrganizer.GetGoldFromDB(file);
+                    if (tmpAsset != null)
                     {
-                        assets.Add(asset);
+                        theList.Add(tmpAsset);
                     }
                 }
             }
-            return assets;
-        }
-        public static List<Gold> GetAllUserGold(string username)
-        {
-            return GetAllUserAsset<Gold>(AppPaths.GetUserGoldFolder(username))
-                   .OfType<Gold>()
-                   .ToList();
-        }
-
-        public static List<Stock> GetAllUserStock(string username)
-        {
-            return GetAllUserAsset<Stock>(AppPaths.GetUserStockFolder(username))
-                   .OfType<Stock>()
-                   .ToList();
-        }
-
-        public static List<RealEstate> GetAllUserRealEstate(string username)
-        {
-            return GetAllUserAsset<RealEstate>(AppPaths.GetUserRealEstateFolder(username))
-                   .OfType<RealEstate>()
-                   .ToList();
+            return theList;
         }
 
         public static List<Crypto> GetAllUserCrypto(string username)
         {
-            return GetAllUserAsset<Crypto>(AppPaths.GetUserCryptoFolder(username))
-                   .OfType<Crypto>()
-                   .ToList();
+            List<Crypto> theList = new List<Crypto>();
+            string folderPath = AppPaths.GetUserCryptoFolder(username);
+            if (Directory.Exists(folderPath))
+            {
+                string[] files = Directory.GetFiles(folderPath);
+                foreach (string file in files)
+                {
+                    Crypto? tmpAsset = JsonOrganizer.GetCryptoFromDB(file);
+                    if (tmpAsset != null)
+                    {
+                        theList.Add(tmpAsset);
+                    }
+                }
+            }
+            return theList;
         }
 
+        public static List<RealEstate> GetAllUserRealEstate(string username)
+        {
+            List<RealEstate> theList = new List<RealEstate>();
+            string folderPath = AppPaths.GetUserRealEstateFolder(username);
+            if (Directory.Exists(folderPath))
+            {
+                string[] files = Directory.GetFiles(folderPath);
+                foreach (string file in files)
+                {
+                    RealEstate? tmpAsset = JsonOrganizer.GetRealEstateFromDB(file);
+                    if (tmpAsset != null)
+                    {
+                        theList.Add(tmpAsset);
+                    }
+                }
+            }
+            return theList;
+        }
+
+        public static List<Stock> GetAllUserStock(string username)
+        {
+            List<Stock> theList = new List<Stock>();
+            string folderPath = AppPaths.GetUserStockFolder(username);
+            if (Directory.Exists(folderPath))
+            {
+                string[] files = Directory.GetFiles(folderPath);
+                foreach (string file in files)
+                {
+                    Stock? tmpAsset = JsonOrganizer.GetStockFromDB(file);
+                    if (tmpAsset != null)
+                    {
+                        theList.Add(tmpAsset);
+                    }
+                }
+            }
+            return theList;
+        }
     }
 }
