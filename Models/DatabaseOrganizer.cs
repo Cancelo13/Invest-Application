@@ -77,22 +77,48 @@ namespace Invest_Application
             return user ?? throw new Exception("Failed to deserialize user data");
 
         }
+
+        private static bool HasGoldId(string username, string id)
+        {
+            string path = Path.Combine(AppPaths.GetUserGoldFolder(username), id + ".json");
+            return File.Exists(path);
+        }
+
+        private static bool HasStockId(string username, string id)
+        {
+            string path = Path.Combine(AppPaths.GetUserStockFolder(username), id + ".json");
+            return File.Exists(path);
+        }
+
+        private static bool HasCryptoId(string username, string id)
+        {
+            string path = Path.Combine(AppPaths.GetUserCryptoFolder(username), id + ".json");
+            return File.Exists(path);
+        }
+
+        private static bool HasRealEstateId(string username, string id)
+        {
+            string path = Path.Combine(AppPaths.GetUserRealEstateFolder(username), id + ".json");
+            return File.Exists(path);
+        }
+
+
         public static void DeleteUserAsset(string username, Asset asset)
         {
             string filePath = "";
-            if (asset is Gold)
+            if (HasGoldId(username, asset.Id))
             {
                 filePath = Path.Combine(AppPaths.GetUserGoldFolder(username), asset.Id + ".json");
             }
-            else if (asset is RealEstate)
+            else if (HasRealEstateId(username, asset.Id))
             {
                 filePath = Path.Combine(AppPaths.GetUserRealEstateFolder(username), asset.Id + ".json");
             }
-            else if (asset is Stock)
+            else if (HasStockId(username, asset.Id))
             {
                 filePath = Path.Combine(AppPaths.GetUserStockFolder(username), asset.Id + ".json");
             }
-            else if (asset is Crypto)
+            else if (HasCryptoId(username, asset.Id))
             {
                 filePath = Path.Combine(AppPaths.GetUserCryptoFolder(username), asset.Id + ".json");
             }
@@ -140,67 +166,27 @@ namespace Invest_Application
             SaveUserAsset(crypto, AppPaths.GetUserCryptoFolder(username));
         }
 
-        public static void DeleteUserGold(string username, string fileName)
+        public static void OverwriteUserGold(Gold gold, string username)
         {
-            fileName += ".json";
-            string filePath = Path.Combine(AppPaths.GetUserGoldFolder(username), fileName);
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-        }
-
-        public static void DeleteUserRealEstate(string username, string fileName)
-        {
-            fileName += ".json";
-            string filePath = Path.Combine(AppPaths.GetUserRealEstateFolder(username), fileName);
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-        }
-
-        public static void DeleteUserStock(string username, string fileName)
-        {
-            fileName += ".json";
-            string filePath = Path.Combine(AppPaths.GetUserStockFolder(username), fileName);
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-        }
-
-        public static void DeleteUserCrypto(string username, string fileName)
-        {
-            fileName += ".json";
-            string filePath = Path.Combine(AppPaths.GetUserCryptoFolder(username), fileName);
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-        }
-
-        public static void OverwriteUserGold(Gold gold, string username, string fileName)
-        {
-            DeleteUserGold(username, fileName);
+            DeleteUserAsset(username, gold);
             SaveUserGold(gold, username);
         }
 
-        public static void OverwriteUserRealEstate(RealEstate realEstate, string username, string fileName)
+        public static void OverwriteUserRealEstate(RealEstate realEstate, string username)
         {
-            DeleteUserRealEstate(username, fileName);
+            DeleteUserAsset(username, realEstate);
             SaveUserRealEstate(realEstate, username);
         }
 
-        public static void OverwriteUserStock(Stock stock, string username, string fileName)
+        public static void OverwriteUserStock(Stock stock, string username)
         {
-            DeleteUserStock(username, fileName);
+            DeleteUserAsset(username, stock);
             SaveUserStock(stock, username);
         }
 
-        public static void OverwriteUserCrypto(Crypto crypto, string username, string fileName)
+        public static void OverwriteUserCrypto(Crypto crypto, string username)
         {
-            DeleteUserCrypto(username, fileName);
+            DeleteUserAsset(username, crypto);
             SaveUserCrypto(crypto, username);
         }
 
