@@ -138,7 +138,7 @@ namespace InvestApp.Forms
             // Purchase Info
             Label lblPurchase = new Label
             {
-                Text = $"Purchase: ${asset.PurchasePrice():N2} on {asset.PurchaseDate:d}",
+                Text = $"Purchase: ${asset.TotalPurchasePrice():N2} on {asset.PurchaseDate:d}",
                 Font = new Font("Segoe UI", 10),
                 Location = new Point(200, 40),
                 AutoSize = true

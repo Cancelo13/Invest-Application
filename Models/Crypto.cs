@@ -1,13 +1,21 @@
-﻿namespace Invest_Application
+﻿using System;
+using System.Text.Json.Serialization;
+
+namespace Invest_Application
 {
     public class Crypto : Asset
     {
-        public Crypto(string name, int quantity, decimal purchasePrice, DateTime purchaseDate)
-            : base(name, quantity, purchasePrice, purchaseDate) { }
+        [JsonConstructor]
+        public Crypto(
+            string name,
+            int quantity,
+            decimal purchasePrice,
+            DateTime purchaseDate)
+            : base(name, quantity, purchasePrice, purchaseDate)
+        {
+        }
 
         public override decimal CurrentPrice()
-        {
-            return Quantity * DatabaseOrganizer.GetCryptoMarketPrice();
-        }
+            => Quantity * DatabaseOrganizer.GetCryptoMarketPrice();
     }
 }

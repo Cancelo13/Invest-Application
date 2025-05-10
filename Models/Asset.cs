@@ -1,36 +1,36 @@
-﻿namespace Invest_Application
+﻿using System;
+using System.Text.Json.Serialization;
+
+namespace Invest_Application
 {
     public abstract class Asset
     {
         public string Name { get; }
         public int Quantity { get; }
-        private decimal _PurchasePrice { get; }
+        public decimal PurchasePrice { get; }
         public DateTime PurchaseDate { get; }
-        public string id { get; }
+        public string Id { get; }
 
-        protected Asset(string name, int quantity, decimal purchasePrice, DateTime purchaseDate)
+        [JsonConstructor]
+        protected Asset(
+            string name,
+            int quantity,
+            decimal purchasePrice,
+            DateTime purchaseDate)
         {
             Name = name;
             Quantity = quantity;
-            _PurchasePrice = purchasePrice;
+            PurchasePrice = purchasePrice;
             PurchaseDate = purchaseDate;
-            id = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            Id = DateTime.Now.ToString("yyyyMMddHHmmssfff");
         }
 
         public abstract decimal CurrentPrice();
 
-        public virtual decimal PurchasePrice()
-        {
-            return _PurchasePrice;
-        }
         public virtual decimal TotalPurchasePrice()
-        {
-            return _PurchasePrice * Quantity;
-        }
+            => PurchasePrice * Quantity;
 
         public virtual decimal CalculateROI()
-        {
-            return (CurrentPrice() - TotalPurchasePrice()) / TotalPurchasePrice();
-        }
+            => (CurrentPrice() - TotalPurchasePrice()) / TotalPurchasePrice();
     }
 }
