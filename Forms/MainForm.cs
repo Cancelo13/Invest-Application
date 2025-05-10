@@ -443,15 +443,41 @@ namespace InvestApp.Forms
         {
             // Clear desktop panel
             panelDesktop.Controls.Clear();
-            ReportGenerator.InitializeGeneration();
-            ReportGenerator.GenerateExcelReport(currentUser.Username);
-            ReportGenerator.GeneratePdfReport(currentUser.Username);
-            ReportGenerator.GenerateTextReport(currentUser.Username);
             // Hide ADD button if it exists
             if (btnAdd != null)
             {
                 btnAdd.Visible = false;
             }
+            if (DatabaseOrganizer.GetUserAssetCount(currentUser.Username) == 0)
+            {
+                // Create "No Assets" label
+                Label lblNoAssets = new Label
+                {
+                    Text = "No assets available to generate report",
+                    Font = new Font("Segoe UI", 24, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(95, 77, 221),
+                    AutoSize = true,
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                // Center the label in the panel
+                lblNoAssets.Location = new Point(
+                    (panelDesktop.Width - lblNoAssets.PreferredWidth) / 2,
+                    (panelDesktop.Height - lblNoAssets.PreferredHeight) / 2
+                );
+
+                // Add label to desktop panel
+                panelDesktop.Controls.Add(lblNoAssets);
+
+                // Activate button styling
+                ActivateButton(sender, Color.FromArgb(95, 77, 221));
+                return;
+            }
+            ReportGenerator.InitializeGeneration();
+            ReportGenerator.GenerateExcelReport(currentUser.Username);
+            ReportGenerator.GeneratePdfReport(currentUser.Username);
+            ReportGenerator.GenerateTextReport(currentUser.Username);
+
 
             // Create container panel for buttons
             Panel reportButtonsPanel = new Panel
