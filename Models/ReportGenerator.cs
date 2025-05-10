@@ -23,5 +23,13 @@ namespace Invest_Application
                 workbook.SaveAs(filePath);
             }
         }
+        public static void SaveExcelReport(string username)
+        {
+
+        }
+        public static void SavePdfReport(string username)
+        {
+
+        }
     }
 }
